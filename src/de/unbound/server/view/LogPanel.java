@@ -32,7 +32,7 @@ public class LogPanel extends JPanel{
 	    if (area.getText().length() >= 3000 ) area.setText(area.getText().substring(0, 1000));
 		
 		try{
-		date = new Date();
+		date.setTime(System.currentTimeMillis());
 		String formattedDate = sdf.format(date);
 		String newLog = formattedDate+" | " +text;
 		area.setText(newLog+"\n"+area.getText());

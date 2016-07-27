@@ -19,11 +19,14 @@ public class ServerGameScreen extends AbstractGameScreen {
 		//hiermit können input processoren aktiviert oder deaktiviert werden
 		//auf dem Server besser deaktiviert, ggf löschen
 		//initializeInputProcessor(); //methode entfernt
+		
 	}
 
 	@Override
 	public void render(float deltaTime) {
+		
 		world.update(deltaTime);
+		
 		LogPanel.log(String.valueOf("Update! DeltaTime: "+deltaTime));
 	}
 
