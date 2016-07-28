@@ -60,7 +60,6 @@ JScrollPane scrollPane = new JScrollPane(table);
 table.setFillsViewportHeight(false);
 //this.add(table.getTableHeader());
 this.add(scrollPane);
-
 	}
 	
 }

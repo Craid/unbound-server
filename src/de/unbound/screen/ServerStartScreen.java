@@ -37,7 +37,7 @@ public class ServerStartScreen extends AbstractGameScreen{
 	        batch.begin();
 	        
 	        font.draw(batch, "Server Startscreen", 0, 50);
-	        font.draw(batch, "(Vorerst) Klicke mit der Maus/Touchpad 1x um das Spiel zu starten", 0, 100);
+	        font.draw(batch, "(Vorerst) Klicke mit der Maus/dem Touchpad 1x um das Spiel zu starten", 0, 100);
 	        batch.end();
 
 	        if (Gdx.input.isTouched()) { 

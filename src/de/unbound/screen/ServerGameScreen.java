@@ -9,6 +9,7 @@ import de.unbound.server.view.PanelLog;
 public class ServerGameScreen extends AbstractGameScreen {
 
 	private World world;
+	private float second = 0;
 
 	public ServerGameScreen(UnboundGame game, WaveHandler waveHandler,
 			AbstractGameUpdate gameMode) {
@@ -26,8 +27,12 @@ public class ServerGameScreen extends AbstractGameScreen {
 	public void render(float deltaTime) {
 		
 		world.update(deltaTime);
-		
-		PanelLog.log(String.valueOf("Update! DeltaTime: "+deltaTime));
+		second+=deltaTime;
+		if(second>=1){
+		PanelLog.log("Amount of Entities = " + World.getInstance().getBattleField().getGameObjects().size());
+		//PanelLog.log(String.valueOf("Update! DeltaTime: "+deltaTime));
+		second=0;
+		}
 	}
 
 }
