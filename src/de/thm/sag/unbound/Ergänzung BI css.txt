@@ -1,0 +1,17 @@
+  .module-desc .module-imgBI1 {
+    height: 125px;
+    width: 125px;
+    background: url(/assets/img/BI1.jpg);
+    border-radius: 100%; }
+	
+	  .module-desc .module-imgBI2 {
+    height: 125px;
+    width: 125px;
+    background: url(/assets/img/BI2.jpg);
+    border-radius: 100%; }
+	
+	  .module-desc .module-imgBI3 {
+    height: 125px;
+    width: 125px;
+    background: url(/assets/img/BI3.jpg);
+    border-radius: 100%; }

@@ -1,8 +1,6 @@
 package de.unbound.server.view;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -13,17 +11,15 @@ import javax.swing.JPanel;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 
 import de.unbound.ServerGame;
-import de.unbound.TestGame;
-import de.unbound.UnboundGame;
 
 public class FrameMain extends JFrame{
 
 	JPanel gamePanel, northPanel, southPanel;
-	JPanel connectionPanel, buttonPanel, logPanel;
+	JPanel connectionPanel, buttonPanel;
+	AlternativePanelLog logPanel;
 	ApplicationListener game;
 	LwjglCanvas canvas;
 	
@@ -32,7 +28,8 @@ public class FrameMain extends JFrame{
 		attachGamePanel();
 		attachPanels();
 		this.setVisible(true);
-		PanelLog.log("Main Frame complete");
+		System.out.println("Main Frame complete");
+		System.out.println("Test");
 	}
 	
 	public void initializeJFrame(){
@@ -56,7 +53,7 @@ public class FrameMain extends JFrame{
 		        	Gdx.app.exit();
 		        	Thread.sleep(1000);
 		        	System.exit(0);
-		        	//ich checks net... es schließt net alles
+		        	//ich checks net... es schlieï¿½t net alles
 		        	}catch(Exception x){}
 		        }
 		        else
@@ -87,10 +84,10 @@ public class FrameMain extends JFrame{
 		this.add(northPanel,"North");
 		
 		southPanel.setLayout(new BorderLayout());
-		logPanel = new PanelLog();
+		logPanel = AlternativePanelLog.getInstance();
 		southPanel.add(logPanel);
 		
 		this.add(southPanel,"South");
-		PanelLog.log("successfully attached all Panels");
+		System.out.println("successfully attached all Panels");
 	}
 }

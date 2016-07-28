@@ -17,8 +17,8 @@ public class ServerGameScreen extends AbstractGameScreen {
 		world = World.getInstance();
 		world.setGameRules(waveHandler, gameMode);
 		
-		//hiermit können input processoren aktiviert oder deaktiviert werden
-		//auf dem Server besser deaktiviert, ggf löschen
+		//hiermit kï¿½nnen input processoren aktiviert oder deaktiviert werden
+		//auf dem Server besser deaktiviert, ggf lï¿½schen
 		//initializeInputProcessor(); //methode entfernt
 		
 	}
@@ -29,7 +29,7 @@ public class ServerGameScreen extends AbstractGameScreen {
 		world.update(deltaTime);
 		second+=deltaTime;
 		if(second>=1){
-		PanelLog.log("Amount of Entities = " + World.getInstance().getBattleField().getGameObjects().size());
+		System.out.println("Amount of Entities = " + World.getInstance().getBattleField().getGameObjects().size());
 		//PanelLog.log(String.valueOf("Update! DeltaTime: "+deltaTime));
 		second=0;
 		}
