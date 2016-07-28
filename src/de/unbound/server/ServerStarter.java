@@ -15,6 +15,7 @@ public class ServerStarter {
 		config.height = 300;
 		config.title = "Unbound";
 		config.resizable = false;
+		config.forceExit = true;
 		
 		new LwjglApplication(new ServerGame(), config);
 	}

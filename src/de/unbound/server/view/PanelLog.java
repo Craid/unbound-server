@@ -8,14 +8,14 @@ import java.util.Date;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-public class LogPanel extends JPanel{
+public class PanelLog extends JPanel{
 
 	static JTextArea area;
 	static Date date;
 	static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	
-	public LogPanel(){
+	public PanelLog(){
 		this.setPreferredSize(new Dimension(600,150));
 		date = new Date();
 		area = new JTextArea();

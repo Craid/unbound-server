@@ -5,9 +5,9 @@ import java.awt.Dimension;
 
 import javax.swing.JPanel;
 
-public class ConnectionPanel extends JPanel{
+public class PanelConnection extends JPanel{
 
-	public ConnectionPanel(){
+	public PanelConnection(){
 		this.setPreferredSize(new Dimension(450,100));
 		this.setBackground(Color.black);
 	}
