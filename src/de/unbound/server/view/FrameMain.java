@@ -42,8 +42,8 @@ public class FrameMain extends JFrame{
 		    @Override
 		    public void windowClosing(WindowEvent e) {
 		        int confirm = JOptionPane.showOptionDialog(
-		             null, "Are You Sure to Close Application?", 
-		             "Exit Confirmation", JOptionPane.YES_NO_OPTION, 
+		             null, "Möchten Sie wirklich den Server beenden?", 
+		             "Bestägigung", JOptionPane.YES_NO_OPTION, 
 		             JOptionPane.QUESTION_MESSAGE, null, null, null);
 		        if (confirm == 0) {
 		        	try{
