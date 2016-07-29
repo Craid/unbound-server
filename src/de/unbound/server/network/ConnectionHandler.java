@@ -5,7 +5,7 @@ import de.unbound.game.World;
 public class ConnectionHandler {
 
 	static ConnectionHandler instance;
-	private TCPReceiver tcpReceiver;
+	private TCPConnectionHandler tcpReceiver;
 	private TCPSender tcpSender;
 	private UDPReceiver udpReceiver;
 	private UDPSender udpSender;
