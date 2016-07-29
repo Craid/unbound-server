@@ -29,7 +29,6 @@ public class FrameMain extends JFrame{
 		attachPanels();
 		this.setVisible(true);
 		System.out.println("Main Frame complete");
-		System.out.println("Test");
 	}
 	
 	public void initializeJFrame(){
@@ -49,9 +48,9 @@ public class FrameMain extends JFrame{
 		        	try{
 		        	game.dispose();
 		        	canvas.getApplicationListener().dispose();
-		        	canvas.exit();
 		        	Gdx.app.exit();
-		        	Thread.sleep(1000);
+		        	canvas.exit();
+		        	
 		        	System.exit(0);
 		        	//ich checks net... es schlie�t net alles
 		        	}catch(Exception x){}
