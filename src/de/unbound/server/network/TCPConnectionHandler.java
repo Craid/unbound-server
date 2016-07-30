@@ -122,5 +122,11 @@ public class TCPConnectionHandler {
 	public void setPortNumber(int port){
 		this.portNumber = port;
 	}
-	
+	public int getLowestIdFromConnectionList(){
+		int i = 1;
+		for (ClientConnection c : clients){
+			if (c.playerID<=i) i++;
+		}
+		return i;
+	}
 }

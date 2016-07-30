@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import de.unbound.server.network.ClientConnection;
+import de.unbound.server.network.TCPConnectionHandler;
 
 public class PanelConnection extends JPanel{
 public static JTable table;
@@ -68,8 +69,7 @@ this.add(scrollPane);
 	public static void insertNewValueToTable(ClientConnection client){
 		Object[] data = new Object[7];
 		data[0] = client.getStatusTCP();
-		data[1] = "lol";
-		//data[1] = client.getClientIP().getHostAddress()+":"+client.getClientPortTCP();
+		data[1] = client.getClientIP().getHostAddress()+":"+String.valueOf(client.getClientPortTCP());
 		data[2] = client.getPlayerID();
 		data[3] = client.getPlayerName();
 		data[4] = client.getLatency();
@@ -83,11 +83,31 @@ this.add(scrollPane);
 		 System.out.println(model.getValueAt(0, 2));
 		for( int i = model.getRowCount() - 1; i >= 0; i-- )
 		{
-			int playerId = Integer.parseInt((String) model.getValueAt(i, 2));
+			int playerId = Integer.parseInt(String.valueOf(model.getValueAt(i, 2)));
 			if (playerId == client.getPlayerID()){
 		    model.removeRow(i);
 		   
 			}
+		}
+	}
+	public static void updateRows(){
+		DefaultTableModel dm = (DefaultTableModel) table.getModel();
+		int rowCount = dm.getRowCount();
+		//Remove rows one by one from the end of the table
+		for (int i = rowCount - 1; i >= 0; i--) {
+		    dm.removeRow(i);
+		}
+		for (ClientConnection client : TCPConnectionHandler.getInstance().clients){
+			Object[] data = new Object[7];
+			data[0] = client.getStatusTCP();
+			data[1] = client.getClientIP().getHostAddress()+":"+String.valueOf(client.getClientPortTCP());
+			data[2] = client.getPlayerID();
+			data[3] = client.getPlayerName();
+			data[4] = client.getLatency();
+			data[5] = client.getPackagesPerSecondSentTo();
+			data[6] = client.getPackagesPerSecondReceived();
+			DefaultTableModel model = (DefaultTableModel) table.getModel();
+			model.addRow(data);
 		}
 	}
 	
