@@ -35,10 +35,10 @@ public class UDPReceiver extends Thread{
 				e.printStackTrace();
 			}
 			String message = new String(packet.getData()); // hier versuchen wir aus dem Packet den String zu lesen
-			System.out.println("[GAME SERVER] CLIENT > ["+ packet.getAddress().getHostAddress()+":"+packet.getPort()+"]: "+ message);
+			System.out.println(logName+"CLIENT > ["+ packet.getAddress().getHostAddress()+":"+packet.getPort()+"]: "+ message);
 			if (message.trim().equalsIgnoreCase("ping")){
-				System.out.println("[GAME SERVER] Returning pong...");
-				sendData((Integer.toString(packet.getPort())).getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
+				//System.out.println(logName+"Returning pong...");
+				//sendData((Integer.toString(packet.getPort())).getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
 				//sendData("pong".getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
 				
 			}

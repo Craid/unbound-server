@@ -19,13 +19,6 @@ public class TCPConnectionHandler extends Thread {
 	TCPConnectionHandler ts;
 	ServerSocket srvSkt;
 
-	public static void main(String[] args) {
-		try {
-			new TCPConnectionHandler();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 
 		HashMap<Socket, PrintWriter> outputSockets;

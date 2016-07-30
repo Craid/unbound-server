@@ -2,7 +2,6 @@ package de.unbound;
 
 import de.unbound.screen.ServerStartScreen;
 
-
 public class ServerGame extends UnboundGame {
 
 	@Override

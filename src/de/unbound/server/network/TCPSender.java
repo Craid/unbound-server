@@ -13,7 +13,7 @@ public class TCPSender extends Thread{
 	private Socket socket;
 	private DataOutputStream outputStream;
 	private int portNumber;
-	private final String logName = "[UDP Receiver] "; //für logs
+	private final String logName = "[TCP Receiver] "; //für logs
 	
 	public TCPSender(int portNumber) {
 			this.socket = new Socket(); // Dieser Socket LISTENED auf diesen Port 
