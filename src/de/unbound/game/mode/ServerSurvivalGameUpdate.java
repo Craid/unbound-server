@@ -1,4 +1,4 @@
-package de.unbound.game.logic;
+package de.unbound.game.mode;
 
 import de.unbound.game.mode.AbstractGameUpdate;
 import de.unbound.game.model.entities.Entity;

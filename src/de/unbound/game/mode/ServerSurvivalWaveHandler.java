@@ -1,11 +1,11 @@
-package de.unbound.game.wave;
+package de.unbound.game.mode;
 
 import de.unbound.game.factories.EntityFactory;
 import de.unbound.game.mode.WaveHandler;
 import de.unbound.game.mode.local.LocalEndlessEntityFactory;
 import de.unbound.game.model.entities.WaveOrder;
 
-public class ServerEndlessWaveHandler extends WaveHandler {
+public class ServerSurvivalWaveHandler extends WaveHandler {
 	
 	/**
 	 * Timeout in seconds
@@ -13,7 +13,7 @@ public class ServerEndlessWaveHandler extends WaveHandler {
 	private static final int WAVETIMEOUTS = 5;
 	private double cummulativeTime;
 
-	public ServerEndlessWaveHandler(EntityFactory ownFactory, EntityFactory enemyFactory) {
+	public ServerSurvivalWaveHandler(EntityFactory ownFactory, EntityFactory enemyFactory) {
 		super(ownFactory, enemyFactory);
 		cummulativeTime = 2; //First Wave in 3 Seconds, next in steps of WAVETIMEOUTS
 		level = 1;
@@ -23,8 +23,8 @@ public class ServerEndlessWaveHandler extends WaveHandler {
 	 * Erstelle ein Spiel in dem die Spieler mit den Prelaten gegen die Enten kämpfen
 	 * @return
 	 */
-	public static ServerEndlessWaveHandler createServerEndlessWaveHandlerPreset() {
-		return new ServerEndlessWaveHandler(new LocalEndlessEntityFactory("Prelate", false),new LocalEndlessEntityFactory("Duck", true));
+	public static ServerSurvivalWaveHandler createServerSurvivalWaveHandlerPreset() {
+		return new ServerSurvivalWaveHandler(new LocalEndlessEntityFactory("Prelate", false),new LocalEndlessEntityFactory("Duck", true));
 	}
 	
 	@Override
