@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import de.unbound.server.view.PanelConnection;
+
 
 
 public class TCPThreadRead extends Thread{ // equivalent to MessageThread
@@ -54,10 +56,22 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			try {
 				input = br.readLine();
 				System.out.println("lool");
-				if (input.equals("EXIT")) {
+				if (input.equalsIgnoreCase("EXIT")) {
 					connectionHandler.outputSockets.remove(skt);
 					connectionHandler.tellEveryone(userName + " has signed off.\n");
+					for (ClientConnection c : TCPConnectionHandler.getInstance().clients)
+					{
+						System.out.println(c.getClientIP().getHostAddress().trim());
+						System.out.println(skt.getInetAddress().getHostAddress().trim());
+						if (c.getClientIP().getHostAddress() == skt.getInetAddress().getHostAddress()) {
+							System.out.println("it is done");
+							PanelConnection.removeConnectionFromTable(c);
+							
+						}
+					}
+					
 					skt.close();
+					
 				} else {
 					connectionHandler.tellEveryone(userName + ": " + input + "\n");
 				}

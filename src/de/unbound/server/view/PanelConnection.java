@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import de.unbound.server.network.ClientConnection;
 
@@ -38,7 +39,26 @@ Object[][] data = {
 //Then the Table is constructed using these data and columnNames:
 
 
-this.table = new JTable(data, columnNames);
+//this.table = new JTable(data, columnNames);
+//this.table.setModel(new DefaultTableModel());
+
+
+
+
+
+DefaultTableModel model = new DefaultTableModel();
+model.addColumn("Status");
+model.addColumn("IPPort");
+model.addColumn("PlayerID");
+model.addColumn("Name");
+model.addColumn("Latency");
+model.addColumn("Packages Sent");
+model.addColumn("Packages Received");
+table = new JTable(model);
+
+
+
+
 JScrollPane scrollPane = new JScrollPane(table);
 table.setFillsViewportHeight(false);
 //this.add(table.getTableHeader());
@@ -55,6 +75,47 @@ this.add(scrollPane);
 		data[4] = client.getLatency();
 		data[5] = client.getPackagesPerSecondSentTo();
 		data[6] = client.getPackagesPerSecondReceived();
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		model.addRow(data);
+	}
+	public static void removeConnectionFromTable(ClientConnection client){
+		DefaultTableModel model = (DefaultTableModel) table.getModel();
+		 System.out.println(model.getValueAt(0, 2));
+		for( int i = model.getRowCount() - 1; i >= 0; i-- )
+		{
+			int playerId = Integer.parseInt((String) model.getValueAt(i, 2));
+			if (playerId == client.getPlayerID()){
+		    model.removeRow(i);
+		   
+			}
+		}
+	}
+	
+	public boolean existsInTable(JTable table, Object[] entry) {
+
+		//http://stackoverflow.com/questions/15639611/
+		//how-to-check-if-a-value-exists-in-jtable-which-i-am-trying-to-add
+	    // Get row and column count
+	    int rowCount = table.getRowCount();
+	    int colCount = table.getColumnCount();
+
+	    // Get Current Table Entry
+	    String curEntry = "";
+	    for (Object o : entry) {
+	        String e = o.toString();
+	        curEntry = curEntry + " " + e;
+	    }
+
+	    // Check against all entries
+	    for (int i = 0; i < rowCount; i++) {
+	        String rowEntry = "";
+	        for (int j = 0; j < colCount; j++)
+	            rowEntry = rowEntry + " " + table.getValueAt(i, j).toString();
+	        if (rowEntry.equalsIgnoreCase(curEntry)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 	
 }

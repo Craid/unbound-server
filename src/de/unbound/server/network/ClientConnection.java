@@ -22,6 +22,8 @@ public ClientConnection(){
 }
 
 public ClientConnection(InetAddress clientIP, int clientPortTCP){
+	this.clientIP = clientIP;
+	this.clientPortTCP = clientPortTCP;
 	init();
 }
 public void init(){
