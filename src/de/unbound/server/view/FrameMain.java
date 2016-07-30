@@ -31,17 +31,12 @@ public class FrameMain extends JFrame{
 		attachGamePanel();
 		attachPanels();
 		this.setVisible(true);
-		System.out.println("Main Frame complete");
+		//System.out.println("Main Frame complete");
 		initializeTCP();
 	}
 	
 	public void initializeTCP(){
-		try {
-			connectionHandler = new TCPConnectionHandler(11300);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			connectionHandler = TCPConnectionHandler.getInstance();
 	}
 	
 	public void initializeJFrame(){
@@ -89,7 +84,7 @@ public class FrameMain extends JFrame{
 		
 		northPanel.setLayout(new BorderLayout());
 		connectionPanel = new PanelConnection();
-		buttonPanel = new PanelButton();
+		buttonPanel = new PanelControls();
 		northPanel.add(connectionPanel,"West");
 		northPanel.add(buttonPanel,"East");
 		
@@ -100,6 +95,6 @@ public class FrameMain extends JFrame{
 		southPanel.add(logPanel);
 		
 		this.add(southPanel,"South");
-		System.out.println("successfully attached all Panels");
+		//System.out.println("successfully attached all Panels");
 	}
 }

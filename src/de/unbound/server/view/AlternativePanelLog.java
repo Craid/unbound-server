@@ -64,8 +64,8 @@ public class AlternativePanelLog extends JPanel {
 
 	public void log(String text) {
 
-		if (area.getText().length() >= 3000)
-			area.setText(area.getText().substring(0, 1000));
+		if (area.getText().length() >= 3500)
+			area.setText(area.getText().substring(0, 3000));
 
 		try {
 			date.setTime(System.currentTimeMillis());

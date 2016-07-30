@@ -13,6 +13,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	private Socket skt;
 	private BufferedReader br;
 	private String userName;
+	private final String logName = "[TCP Reader] "; //für logs
 	
 	
 	public TCPThreadRead(TCPConnectionHandler connectionHandler, Socket skt){
@@ -39,9 +40,20 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	public void run() {
 		getUserName();
 		String input = "";
-		do {
+		while (!skt.isClosed()) {
+			if (connectionHandler.serverSocket.isClosed()){
+				try {
+					skt.close();
+					break;
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
 			try {
 				input = br.readLine();
+				System.out.println("lool");
 				if (input.equals("EXIT")) {
 					connectionHandler.outputSockets.remove(skt);
 					connectionHandler.tellEveryone(userName + " has signed off.\n");
@@ -52,7 +64,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} while (!skt.isClosed());
+		} 
 		connectionHandler.outputSockets.remove(skt);
 	}
 }
