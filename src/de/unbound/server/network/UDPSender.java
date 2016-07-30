@@ -40,7 +40,7 @@ public class UDPSender extends Thread{
 			e.printStackTrace();
 		}
 	}
-	public void sendEmptyDataToSelf(){
+	public void sendEmptyDataToSelf(){ //in order to close socket
 		byte[] data = "exit".getBytes();
 		packet.setData(data,0,data.length); //data;offset;länge des Packets
 		try {

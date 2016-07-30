@@ -24,11 +24,11 @@ public class AlternativePanelLog extends JPanel {
 	private static AlternativePanelLog instance;
 
 	private AlternativePanelLog() {
-		this.setPreferredSize(new Dimension(600, 150));
+		this.setPreferredSize(new Dimension(750, 150));
 		date = new Date();
 		area = new JTextArea();
 		log("initialized LogPanel");
-		area.setPreferredSize(new Dimension(580, 150));
+		area.setPreferredSize(new Dimension(730, 150));
 		area.setSelectionColor(Color.BLACK);
 		this.add(area);
 

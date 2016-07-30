@@ -22,11 +22,11 @@ public class PanelLog extends JPanel {
 	private static PanelLog instance;
 
 	private PanelLog() {
-		this.setPreferredSize(new Dimension(600, 150));
+		this.setPreferredSize(new Dimension(700, 150));
 		date = new Date();
 		area = new JTextArea();
 		log("initialized LogPanel");
-		area.setPreferredSize(new Dimension(580, 150));
+		area.setPreferredSize(new Dimension(680, 150));
 		area.setSelectionColor(Color.BLACK);
 		this.add(area);
 	}

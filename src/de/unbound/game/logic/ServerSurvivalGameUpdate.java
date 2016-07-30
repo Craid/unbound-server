@@ -1,6 +1,6 @@
 package de.unbound.game.logic;
 
-import de.unbound.game.logic.AbstractGameUpdate;
+import de.unbound.game.mode.AbstractGameUpdate;
 import de.unbound.game.model.entities.Entity;
 
 public class ServerSurvivalGameUpdate extends AbstractGameUpdate{

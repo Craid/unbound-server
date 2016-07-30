@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.unbound.UnboundGame;
-import de.unbound.game.mode.LocalEndlessGameMode;
+import de.unbound.game.mode.local.LocalEndlessGameMode;
 
 public class ServerStartScreen extends AbstractGameScreen{
 

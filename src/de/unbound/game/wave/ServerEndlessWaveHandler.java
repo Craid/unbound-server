@@ -1,6 +1,9 @@
 package de.unbound.game.wave;
 
 import de.unbound.game.factories.EntityFactory;
+import de.unbound.game.mode.WaveHandler;
+import de.unbound.game.mode.local.LocalEndlessEntityFactory;
+import de.unbound.game.model.entities.WaveOrder;
 
 public class ServerEndlessWaveHandler extends WaveHandler {
 	
@@ -21,7 +24,7 @@ public class ServerEndlessWaveHandler extends WaveHandler {
 	 * @return
 	 */
 	public static ServerEndlessWaveHandler createServerEndlessWaveHandlerPreset() {
-		return new ServerEndlessWaveHandler(new EntityFactory("Prelate", false),new EntityFactory("Duck", true));
+		return new ServerEndlessWaveHandler(new LocalEndlessEntityFactory("Prelate", false),new LocalEndlessEntityFactory("Duck", true));
 	}
 	
 	@Override
@@ -44,7 +47,7 @@ public class ServerEndlessWaveHandler extends WaveHandler {
 		int commander = level/5;
 		int scavenger = level%5;
 		int pawn = (level%5) * 3;
-		return new WaveOrder(boss, pawn, scavenger, commander, 0, 0, 0, 0);
+		return new WaveOrder(boss, pawn, scavenger, commander);
 	}
 	
 }
