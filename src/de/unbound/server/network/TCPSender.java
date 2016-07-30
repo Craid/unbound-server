@@ -26,6 +26,7 @@ public class TCPSender{
 		HashMap<Socket, PrintWriter> outputSockets = connectionHandler.outputSockets;
 		
 		System.out.println("Sending: " + msg.trim() + " to " + outputSockets.size() + " Clients.");
+
 		if (outputSockets.size() != 0){
 			synchronized (outputSockets) {
 				for (Socket s : outputSockets.keySet()) {

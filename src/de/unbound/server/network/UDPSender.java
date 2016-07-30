@@ -34,6 +34,7 @@ public class UDPSender extends Thread{
 		System.out.println(logName+" Trying to Send the Data to a Client...");
 		try {
 			this.socket.send(packet);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

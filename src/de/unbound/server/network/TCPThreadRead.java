@@ -60,6 +60,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			
 			try {
 				input = br.readLine();
+				client.packagesPerSecondReceived++;
 				if (input.equalsIgnoreCase("EXIT")) {
 					connectionHandler.outputSockets.remove(skt);
 					connectionHandler.tellEveryone(userName + " has signed off.\n");
@@ -84,6 +85,8 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 					
 				} else {
 					connectionHandler.tellEveryone(userName + ": " + input + "\n");
+					client.packagesPerSecondSentTo++;
+					PanelConnection.updateRows();
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

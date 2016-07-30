@@ -40,7 +40,7 @@ public class FrameMain extends JFrame{
 	}
 	
 	public void initializeJFrame(){
-		this.setSize(600, 800);
+		this.setSize(750, 800);
 		this.setLayout(new BorderLayout());
 		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		

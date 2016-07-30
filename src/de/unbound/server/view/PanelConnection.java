@@ -16,7 +16,7 @@ public class PanelConnection extends JPanel{
 public static JTable table;
 	
 	public PanelConnection(){
-		this.setPreferredSize(new Dimension(420,100));
+		this.setPreferredSize(new Dimension(570,100));
 		this.setBackground(Color.black);
 		this.setLayout(new BorderLayout());
 		initializeTable();
@@ -57,7 +57,7 @@ model.addColumn("Packages Sent");
 model.addColumn("Packages Received");
 table = new JTable(model);
 
-
+table.getColumnModel().getColumn(1).setPreferredWidth(120);
 
 
 JScrollPane scrollPane = new JScrollPane(table);
