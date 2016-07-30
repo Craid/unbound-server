@@ -13,21 +13,14 @@ public class TCPSender extends Thread{
 	private Socket socket;
 	private DataOutputStream outputStream;
 	private int portNumber;
-	private final String logName = "[TCP Receiver] "; //für logs
+	private final String logName = "[TCP Sender] "; //für logs
 	
 	public TCPSender(int portNumber) {
-			this.socket = new Socket(); // Dieser Socket LISTENED auf diesen Port 
+			this.socket = new Socket(); 
 	}
 	
 	
 	public void sendData(byte[] data, InetAddress ipAddressReceiver, int portReceiver){
-		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddressReceiver, portReceiver); // 11333 = Port
-		System.out.println("[GAME SERVER] Trying to Send the Data to a Client...");
-		try {
-			this.socket.send(packet);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// needs to be implemented
 	}
 }
