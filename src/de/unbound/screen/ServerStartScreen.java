@@ -7,8 +7,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.unbound.UnboundGame;
-import de.unbound.game.logic.LocalGameUpdate;
-import de.unbound.game.wave.LocaleEndlessWaveHandler;
+import de.unbound.game.mode.LocalEndlessGameMode;
 
 public class ServerStartScreen extends AbstractGameScreen{
 
@@ -41,7 +40,7 @@ public class ServerStartScreen extends AbstractGameScreen{
 	        batch.end();
 
 	        if (Gdx.input.isTouched()) { 
-	            game.setScreen(new ServerGameScreen(game,LocaleEndlessWaveHandler.createLocaleEndlessWaveHandlerPreset(),new LocalGameUpdate()));
+	            game.setScreen(new ServerGameScreen(game,new LocalEndlessGameMode()));
 	            dispose();
 	        }
 	    }

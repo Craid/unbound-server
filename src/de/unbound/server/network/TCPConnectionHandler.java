@@ -12,38 +12,32 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.HashMap;
 
+public class TCPConnectionHandler {
 
-
-public class TCPConnectionHandler extends Thread {
-
-	TCPConnectionHandler ts;
+	TCPConnectionHandler connectionHandler;
+	TCPSender sender;
 	ServerSocket srvSkt;
 
+	HashMap<Socket, PrintWriter> outputSockets;
 
+	public TCPConnectionHandler(int portNumber) throws IOException {
+		ServerSocket serverSocket = new ServerSocket(portNumber);
+		outputSockets = new HashMap<Socket, PrintWriter>();
+		new TCPThreadAccept(this, serverSocket).start();
+		System.out.println("Unbound Server started. Waiting for clients to connect...");
+		sender = new TCPSender(this);
+	}
+	public void tellEveryone(String msg){
+		sender.tellEveryone(msg);
+	}
 
-		HashMap<Socket, PrintWriter> outputSockets;
-
-		public TCPConnectionHandler(int portNumber) throws IOException {
-			ServerSocket serverSocket = new ServerSocket(portNumber);
-			outputSockets = new HashMap<Socket, PrintWriter>();
-			new TCPThreadAccept(this, serverSocket).start();
-			System.out.println("Server started. Waiting for clients to connect...");
+	public static void main(String[] args){
+		try {
+			new TCPConnectionHandler(11300);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		public void tellEveryone(String msg) {
-			System.out.println("Sending: " + msg.trim() + " to " + outputSockets.size() + " Clients.");
-			if (outputSockets.size() != 0){
-				synchronized (outputSockets) {
-					for (Socket s : outputSockets.keySet()) {
-						PrintWriter outMsg = outputSockets.get(s);
-						outMsg.println(msg);
-						outMsg.flush();
-					}
-				}
-			}
-		}
-
-
 	}
 	
-
+}

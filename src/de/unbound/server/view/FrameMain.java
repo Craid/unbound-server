@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 
 import de.unbound.ServerGame;
+import de.unbound.server.network.TCPConnectionHandler;
 
 public class FrameMain extends JFrame{
 
@@ -22,6 +24,7 @@ public class FrameMain extends JFrame{
 	AlternativePanelLog logPanel;
 	ApplicationListener game;
 	LwjglCanvas canvas;
+	TCPConnectionHandler connectionHandler;
 	
 	public FrameMain(){
 		initializeJFrame();
@@ -29,6 +32,16 @@ public class FrameMain extends JFrame{
 		attachPanels();
 		this.setVisible(true);
 		System.out.println("Main Frame complete");
+		initializeTCP();
+	}
+	
+	public void initializeTCP(){
+		try {
+			connectionHandler = new TCPConnectionHandler(11300);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void initializeJFrame(){

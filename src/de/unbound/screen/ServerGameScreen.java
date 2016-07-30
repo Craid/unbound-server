@@ -2,20 +2,17 @@ package de.unbound.screen;
 
 import de.unbound.UnboundGame;
 import de.unbound.game.World;
-import de.unbound.game.logic.AbstractGameUpdate;
-import de.unbound.game.wave.WaveHandler;
-import de.unbound.server.view.PanelLog;
+import de.unbound.game.mode.GameMode;
 
 public class ServerGameScreen extends AbstractGameScreen {
 
 	private World world;
 	private float second = 0;
 
-	public ServerGameScreen(UnboundGame game, WaveHandler waveHandler,
-			AbstractGameUpdate gameMode) {
+	public ServerGameScreen(UnboundGame game, GameMode gameMode) {
 		super(game);
 		world = World.getInstance();
-		world.setGameRules(waveHandler, gameMode);
+		world.setGameMode(gameMode);
 		
 		//hiermit k�nnen input processoren aktiviert oder deaktiviert werden
 		//auf dem Server besser deaktiviert, ggf l�schen
