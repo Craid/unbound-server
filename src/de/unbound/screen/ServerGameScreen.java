@@ -25,7 +25,7 @@ public class ServerGameScreen extends AbstractGameScreen {
 		
 		world.update(deltaTime);
 		second+=deltaTime;
-		if(second>=1){
+		if(second>=25){
 		System.out.println("Amount of Entities = " + World.getInstance().getBattleField().getGameObjects().size());
 		//PanelLog.log(String.valueOf("Update! DeltaTime: "+deltaTime));
 		second=0;

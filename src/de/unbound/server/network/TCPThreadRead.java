@@ -58,52 +58,26 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			if (connectionHandler.serverSocket.isClosed()){
 				try {
 					skt.close();
+					System.out.println("Socket closed");
 					break;
+					
 				} catch (IOException e) {
 					e.printStackTrace();
+					System.out.println("Something went wrong in TCPThreadRead");
 				}
 			}
 			
 			try {
-
+				//System.out.println("Trying to read line");
 				input = br.readLine();
-
+				System.out.println(logName+" TCP Package Message: "+input);
 				
 				client.packagesPerSecondReceived++;
 				if (input.equalsIgnoreCase("EXIT")) {
-					connectionHandler.outputSockets.remove(skt);
-					connectionHandler.tellEveryone(userName + " has signed off.\n");
-					int port = skt.getPort();
-					ClientConnection connection = null;
-					for (ClientConnection c : ConnectionHandler.getInstance().clients)
-					{
-						
-						
-						System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
-						if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim())) {
-							if (port == c.getClientPortTCP()){
-							System.out.println(logName+"Player "+c.playerID+" removed from Connection List");
-							PanelConnection.removeConnectionFromTable(c);
-							connection = c;
-							}
-						}
-					}
-					
-					ConnectionHandler.getInstance().clients.remove(connection);
-					skt.close();
-					
+					exitProcedure();	
 				}
 				if (input.equalsIgnoreCase("New Player")) {
-					System.out.println("NEW PLAYER DETECTED"); //TODO i don't get it..
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
-					System.out.println("NEW PLAYER DETECTED");
+					System.out.println(logName+"NEW PLAYER DETECTED"); //TODO i don't get it..
 					//ConnectionHandler.getInstance().tcpSender.
 					PrintWriter outMsg = ConnectionHandler.getInstance().outputSockets.get(skt);
 					ArrayList<Entity> playerAndMainBase = new ArrayList<Entity>();
@@ -120,18 +94,57 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 							dOut.writeInt(message.length); // write length of the message
 							dOut.write(message); 
 							dOut.flush();
+							System.out.println("Sent Player and Main Base");
 					
 					
 					}
 				
-					//connectionHandler.tellEveryone(userName + ": " + input + "\n");
+					connectionHandler.tellEveryone("jou ALPHA");
 					//client.packagesPerSecondSentTo++;
 					//PanelConnection.updateRows();
 				
 			} catch (IOException e) {
+				try {
+					skt.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+					System.out.println("close is wrong");
+				}
 				e.printStackTrace();
+				System.out.println("read is wrong");
+				exitProcedure();	
+				
 			}
 		} 
 		connectionHandler.outputSockets.remove(skt);
+	}
+	
+	public void exitProcedure(){
+		connectionHandler.outputSockets.remove(skt);
+		connectionHandler.tellEveryone(userName + " has signed off.\n");
+		int port = skt.getPort();
+		ClientConnection connection = null;
+		for (ClientConnection c : ConnectionHandler.getInstance().clients)
+		{
+			
+			
+			System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
+			if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim())) {
+				if (port == c.getClientPortTCP()){
+				System.out.println(logName+"Player "+c.playerID+" removed from Connection List");
+				PanelConnection.removeConnectionFromTable(c);
+				connection = c;
+				}
+			}
+		}
+		
+		ConnectionHandler.getInstance().clients.remove(connection);
+		try {
+			skt.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
