@@ -20,14 +20,17 @@ import de.unbound.game.World;
 public class TCPConnectionHandler {
 
 	TCPConnectionHandler connectionHandler;
-	TCPSender sender;
-	UDPReceiver udpReceiver;
-	UDPSender udpSender;
-	ServerSocket serverSocket;
-	int portNumber;
+	int 	portNumber;
+	ServerSocket 	serverSocket;
+	TCPThreadAccept tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
+	TCPSender 		tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
+	UDPReceiver 	udpReceiver; //empfängt alle UDP-Packages
+	UDPSender 		udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
+	
 	HashMap<Socket, PrintWriter> outputSockets;
 	public ArrayList<ClientConnection> clients;
 	private final String logName = "[Connection Handler] "; //für logs
+	
 	public static TCPConnectionHandler instance;
 	
 	public static TCPConnectionHandler getInstance(){
@@ -74,7 +77,7 @@ public class TCPConnectionHandler {
 		outputSockets = new HashMap<Socket, PrintWriter>();
 		new TCPThreadAccept(this, serverSocket).start(); // empfängt alle requests und schreibt sie in die Hashmap
 		System.out.println("Unbound Server started. Waiting for clients to connect...");
-		sender = new TCPSender(this);
+		tcpSender = new TCPSender(this);
 		
 	}
 	public void stopTCP(){
@@ -103,7 +106,7 @@ public class TCPConnectionHandler {
 
 	
 	public void tellEveryone(String msg){
-		sender.tellEveryone(msg);
+		tcpSender.tellEveryone(msg);
 	}
 
 	public ArrayList<Socket> getOutputSockets(){

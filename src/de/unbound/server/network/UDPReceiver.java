@@ -53,6 +53,12 @@ public class UDPReceiver extends Thread{
 	
 	
 	
+	
+	
+	
+	
+	
+	
 	public void toggleRunning(){
 		running = !running;
 	}
