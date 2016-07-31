@@ -13,10 +13,10 @@ import java.util.HashMap;
 
 public class TCPSender{
 	private Socket socket;
-	private TCPConnectionHandler connectionHandler;
+	private ConnectionHandler connectionHandler;
 	private final String logName = "[TCP Sender] "; //für logs
 	
-	public TCPSender(TCPConnectionHandler connectionHandler) {
+	public TCPSender(ConnectionHandler connectionHandler) {
 			this.connectionHandler = connectionHandler;
 	}
 	

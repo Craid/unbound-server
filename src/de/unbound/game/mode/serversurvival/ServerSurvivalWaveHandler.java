@@ -1,4 +1,4 @@
-package de.unbound.game.mode;
+package de.unbound.game.mode.serversurvival;
 
 import de.unbound.game.factories.EntityFactory;
 import de.unbound.game.mode.WaveHandler;

@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import de.unbound.server.network.ClientConnection;
-import de.unbound.server.network.TCPConnectionHandler;
+import de.unbound.server.network.ConnectionHandler;
 
 public class PanelConnection extends JPanel{
 public static JTable table;
@@ -75,6 +75,8 @@ this.add(scrollPane);
 		data[4] = client.getLatency();
 		data[5] = client.getPackagesPerSecondSentTo();
 		data[6] = client.getPackagesPerSecondReceived();
+		
+		
 		DefaultTableModel model = (DefaultTableModel) table.getModel();
 		model.addRow(data);
 	}
@@ -97,7 +99,7 @@ this.add(scrollPane);
 		for (int i = rowCount - 1; i >= 0; i--) {
 		    dm.removeRow(i);
 		}
-		for (ClientConnection client : TCPConnectionHandler.getInstance().clients){
+		for (ClientConnection client : ConnectionHandler.getInstance().clients){
 			Object[] data = new Object[7];
 			data[0] = client.getStatusTCP();
 			data[1] = client.getClientIP().getHostAddress()+":"+String.valueOf(client.getClientPortTCP());

@@ -9,11 +9,11 @@ import de.unbound.server.view.PanelConnection;
 
 
 public class TCPThreadAccept extends Thread{
-	TCPConnectionHandler connectionHandler;
+	ConnectionHandler connectionHandler;
 	ServerSocket srvSkt;
 	private final String logName = "[TCP Accepter] "; //für logs
 
-	public TCPThreadAccept(TCPConnectionHandler connectionHandler, ServerSocket srvSkt) {
+	public TCPThreadAccept(ConnectionHandler connectionHandler, ServerSocket srvSkt) {
 		this.connectionHandler = connectionHandler;
 		this.srvSkt = srvSkt;
 	}
@@ -27,8 +27,8 @@ public class TCPThreadAccept extends Thread{
 				
 				
 				
-				newConnection.playerID = TCPConnectionHandler.getInstance().getLowestIdFromConnectionList(); //Player ID
-				TCPConnectionHandler.getInstance().clients.add(newConnection); // 
+				newConnection.playerID = ConnectionHandler.getInstance().getLowestIdFromConnectionList(); //Player ID
+				ConnectionHandler.getInstance().clients.add(newConnection); // 
 				
 				PanelConnection.insertNewValueToTable(newConnection);
 				

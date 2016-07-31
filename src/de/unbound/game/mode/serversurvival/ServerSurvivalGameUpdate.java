@@ -1,4 +1,4 @@
-package de.unbound.game.mode;
+package de.unbound.game.mode.serversurvival;
 
 import de.unbound.game.mode.AbstractGameUpdate;
 import de.unbound.game.model.entities.Entity;

@@ -17,30 +17,30 @@ import java.util.HashMap;
 
 import de.unbound.game.World;
 
-public class TCPConnectionHandler {
+public class ConnectionHandler {
 
-	TCPConnectionHandler connectionHandler;
+	ConnectionHandler connectionHandler;
 	int 	portNumber;
 	ServerSocket 	serverSocket;
 	TCPThreadAccept tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
 	TCPSender 		tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
-	UDPReceiver 	udpReceiver; //empfängt alle UDP-Packages
+	UDPThreadReceiver 	udpReceiver; //empfängt alle UDP-Packages
 	UDPSender 		udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
 	
 	HashMap<Socket, PrintWriter> outputSockets;
 	public ArrayList<ClientConnection> clients;
 	private final String logName = "[Connection Handler] "; //für logs
 	
-	public static TCPConnectionHandler instance;
+	public static ConnectionHandler instance;
 	
-	public static TCPConnectionHandler getInstance(){
+	public static ConnectionHandler getInstance(){
 		if(instance == null)
-			instance = new TCPConnectionHandler();
+			instance = new ConnectionHandler();
 		return instance;
 	}
 	
 
-	public TCPConnectionHandler(){
+	public ConnectionHandler(){
 		this.portNumber = 11300; //default value
 	}
 	
@@ -55,7 +55,7 @@ public class TCPConnectionHandler {
 		clients.clear();
 	}
 	public void startUDP(){
-		udpReceiver = new UDPReceiver(portNumber+1);
+		udpReceiver = new UDPThreadReceiver(portNumber+1);
 		udpReceiver.start();
 		udpSender = new UDPSender(portNumber+2);
 	}

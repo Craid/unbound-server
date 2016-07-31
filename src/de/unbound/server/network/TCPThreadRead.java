@@ -11,7 +11,7 @@ import de.unbound.server.view.PanelConnection;
 
 public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	
-	private TCPConnectionHandler connectionHandler;
+	private ConnectionHandler connectionHandler;
 	private Socket skt;
 	private BufferedReader br;
 	private String userName;
@@ -19,7 +19,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	private final String logName = "[TCP Reader] "; //für logs
 	
 	
-	public TCPThreadRead(TCPConnectionHandler connectionHandler, Socket skt,ClientConnection c){
+	public TCPThreadRead(ConnectionHandler connectionHandler, Socket skt,ClientConnection c){
 		try {
 			this.connectionHandler = connectionHandler;
 			this.skt = skt;
@@ -66,21 +66,21 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 					connectionHandler.tellEveryone(userName + " has signed off.\n");
 					int port = skt.getPort();
 					ClientConnection connection = null;
-					for (ClientConnection c : TCPConnectionHandler.getInstance().clients)
+					for (ClientConnection c : ConnectionHandler.getInstance().clients)
 					{
 						
 						
 						System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
 						if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim())) {
 							if (port == c.getClientPortTCP()){
-							System.out.println("it is done");
+							System.out.println(logName+"Player "+c.playerID+" removed from Connection List");
 							PanelConnection.removeConnectionFromTable(c);
 							connection = c;
 							}
 						}
 					}
 					
-					TCPConnectionHandler.getInstance().clients.remove(connection);
+					ConnectionHandler.getInstance().clients.remove(connection);
 					skt.close();
 					
 				} else {

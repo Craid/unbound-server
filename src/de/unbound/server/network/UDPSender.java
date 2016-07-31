@@ -32,88 +32,6 @@ public class UDPSender extends Thread{
 			this.portNumber = portNumber;
 	}
 	
-	public byte[] constructUDPPackage(ArrayList<Entity> entities){
-		//timestamp am Anfang
-		//dann in einer schleife: constructUDPPackage (einzelne entit‰t)
-		return null;
-	}
-	public byte[] constructEntityByteStream(Entity entity){
-
-		ArrayList<Entity> list = World.getInstance().getBattleField().getPlayers();
-		Entity player = list.get(1);
-		// Entity ->
-		// (int)	id		4 byte
-		byte[] byteID = intToByteArray(player.getId());
-		// (byte)	type	1 byte
-		//byte[] byteType = intToByteArray(player.getModel().get); ??
-		// (float)	positionX	4 byte
-		byte[] bytePosX = floatToByteArray(player.getPosition().x);
-		// (float)	positionY	4 byte
-		byte[] bytePosY = floatToByteArray(player.getPosition().y);
-		// (float)	direction	4 byte
-		byte[] byteDirX = floatToByteArray(player.getDirection().x);
-		// (float)	direction	4 byte
-		byte[] byteDirY = floatToByteArray(player.getDirection().y);
-		// (float)	velocityX	4 byte
-		byte[] byteVelX = floatToByteArray(player.getModel().getAcceleration()); // eig sollte velocity auch ein vektor sein
-		// (float)	velocityY	4 byte
-		//         <<<<	fehlt >>>>
-		
-		// Zusammenschweiﬂen
-		byte[] sum = new byte[24];
-		sum[23] = byteID[4];
-		return null;
-	}
-	
-	public static void main(String[] args){
-
-		// (int)	id		4 byte
-		byte[] byteID = intToByteArray(343);
-		// (byte)	type	1 byte
-		//byte[] byteType = intToByteArray(player.getModel().get); ??
-		// (float)	positionX	4 byte
-		byte[] bytePosX = floatToByteArray(1.41f);
-		// (float)	positionY	4 byte
-		byte[] bytePosY = floatToByteArray(2.564f);
-		// (float)	direction	4 byte
-		byte[] byteDirX = floatToByteArray(0.240f);
-		// (float)	direction	4 byte
-		byte[] byteDirY = floatToByteArray(0.444f);
-		// (float)	velocityX	4 byte
-		byte[] byteVelX = floatToByteArray(1242.23f); // eig sollte velocity auch ein vektor sein
-		// (float)	velocityY	4 byte
-		//         <<<<	fehlt >>>>
-		
-		// Zusammenschweiﬂen
-		byte[] sum = new byte[24];
-		sum[23] = byteID[3];
-
-		sum[0] = byteID[0];
-		sum[1] = byteID[1];
-		sum[2] = byteID[2];
-		sum[3] = byteID[3];
-		System.out.println(sum[0]);
-		System.out.println(fromByteArray(byteID));
-		System.out.println(fromByteArray(sum));
-	}
-	public static int fromByteArray(byte[] bytes) {
-	     return ByteBuffer.wrap(bytes).getInt();
-	}
-	
-	
-	public static byte [] longToByteArray (long value)
-	{
-	    return ByteBuffer.allocate(8).putLong(value).array();
-	}
-	public static byte [] floatToByteArray (float value)
-	{  
-	     return ByteBuffer.allocate(4).putFloat(value).array();
-	}
-	public static byte [] intToByteArray (int value)
-	{  
-	     return ByteBuffer.allocate(4).putInt(value).array();
-	}
-	
 	
 	public void sendData(byte[] data, InetAddress ipAddressReceiver, int portReceiver){
 		packet.setData(data,0,data.length); //data;offset;l‰nge des Packets
@@ -128,24 +46,23 @@ public class UDPSender extends Thread{
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendAllEntitiesToAllPlayers(){
+		
+	}
+	
+	
 	public void sendEmptyDataToSelf(){ //in order to close socket
 		byte[] data = "exit".getBytes();
 		packet.setData(data,0,data.length); //data;offset;l‰nge des Packets
 		try {
-			packet.setAddress(InetAddress.getLocalHost());
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} // 188.58.54.66 example
-		packet.setPort(portNumber-1);// 11333 = Port
-		System.out.println(logName+" Trying to Send the Data to a Client...");
-		try {
-			this.socket.send(packet);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			sendData(data, InetAddress.getLocalHost(), portNumber-1);
+		} catch (UnknownHostException e2) {
+			e2.printStackTrace();
 		}
+		System.out.println(logName+" Send Data to self...");
 	}
+	
 	public void close(){
 		this.socket.close();
 		System.out.println(logName+"Closed!");

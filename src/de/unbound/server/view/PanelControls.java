@@ -18,7 +18,7 @@ import java.awt.Rectangle;
 
 import javax.swing.JLabel;
 
-import de.unbound.server.network.TCPConnectionHandler;
+import de.unbound.server.network.ConnectionHandler;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -38,8 +38,8 @@ public class PanelControls extends JPanel {
 		
 		btnStartServer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TCPConnectionHandler.getInstance().setPortNumber(PanelControls.getTxtPort());
-				TCPConnectionHandler.getInstance().startServer();
+				ConnectionHandler.getInstance().setPortNumber(PanelControls.getTxtPort());
+				ConnectionHandler.getInstance().startServer();
 				PanelControls.toggleButtons();
 			}
 		});
@@ -48,7 +48,7 @@ public class PanelControls extends JPanel {
 		
 		btnStopServer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TCPConnectionHandler.getInstance().stopServer();
+				ConnectionHandler.getInstance().stopServer();
 				PanelControls.toggleButtons();
 			
 			}

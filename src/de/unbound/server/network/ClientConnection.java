@@ -1,6 +1,7 @@
 package de.unbound.server.network;
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class ClientConnection {
 
@@ -29,9 +30,18 @@ public ClientConnection(InetAddress clientIP, int clientPortTCP){
 public void init(){
 	statusTCP = "Pending...";
 	statusUDP = "Pending...";
+	clientPortTCP = 0;
+	clientPortUDP = 0;
 	packagesPerSecondReceived = 0;
 	packagesPerSecondSentTo = 0;
 	playerName = "Pending...";
+	playerID = 0;
+	try {
+		clientIP = InetAddress.getLocalHost();
+	} catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
 }
 
 public InetAddress getClientIP() {
