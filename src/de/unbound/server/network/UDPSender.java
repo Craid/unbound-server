@@ -6,12 +6,6 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-
-import de.unbound.game.BattleField;
-import de.unbound.game.World;
-import de.unbound.game.model.entities.Entity;
 
 public class UDPSender extends Thread{
 
@@ -26,7 +20,6 @@ public class UDPSender extends Thread{
 				this.socket = new DatagramSocket(portNumber); // Dieser Socket LISTENED auf diesen Port
 				System.out.println(logName+"Started with Port: "+portNumber);
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 			this.portNumber = portNumber;
@@ -42,7 +35,6 @@ public class UDPSender extends Thread{
 			this.socket.send(packet);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

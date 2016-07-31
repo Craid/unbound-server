@@ -23,9 +23,9 @@ public ClientConnection(){
 }
 
 public ClientConnection(InetAddress clientIP, int clientPortTCP){
+	init();
 	this.clientIP = clientIP;
 	this.clientPortTCP = clientPortTCP;
-	init();
 }
 public void init(){
 	statusTCP = "Pending...";
@@ -39,7 +39,6 @@ public void init(){
 	try {
 		clientIP = InetAddress.getLocalHost();
 	} catch (UnknownHostException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 }

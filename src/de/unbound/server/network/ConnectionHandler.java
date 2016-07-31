@@ -21,11 +21,11 @@ public class ConnectionHandler {
 
 	ConnectionHandler connectionHandler;
 	int 	portNumber;
-	ServerSocket 	serverSocket;
-	TCPThreadAccept tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
-	TCPSender 		tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
-	UDPThreadReceiver 	udpReceiver; //empfängt alle UDP-Packages
-	UDPSender 		udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
+	public ServerSocket 	serverSocket;
+	public TCPThreadAccept tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
+	public TCPSender 		tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
+	public UDPThreadReceiver 	udpReceiver; //empfängt alle UDP-Packages
+	public UDPSender 		udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
 	
 	HashMap<Socket, PrintWriter> outputSockets;
 	public ArrayList<ClientConnection> clients;
@@ -40,7 +40,7 @@ public class ConnectionHandler {
 	}
 	
 
-	public ConnectionHandler(){
+	private ConnectionHandler(){
 		this.portNumber = 11300; //default value
 	}
 	
@@ -71,7 +71,6 @@ public class ConnectionHandler {
 			serverSocket = new ServerSocket(portNumber);
 			System.out.println(logName+"Started with Port: "+portNumber);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		outputSockets = new HashMap<Socket, PrintWriter>();
@@ -97,7 +96,6 @@ public class ConnectionHandler {
 			System.out.println("The Server has stopped");
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			
 		}

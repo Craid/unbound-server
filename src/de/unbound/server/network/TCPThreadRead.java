@@ -1,10 +1,17 @@
 package de.unbound.server.network;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
+import de.unbound.game.World;
+import de.unbound.game.model.entities.Entity;
+import de.unbound.game.network.serialization.ByteBuilderHelper;
+import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
 
@@ -53,13 +60,15 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 					skt.close();
 					break;
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 			
 			try {
+
 				input = br.readLine();
+
+				
 				client.packagesPerSecondReceived++;
 				if (input.equalsIgnoreCase("EXIT")) {
 					connectionHandler.outputSockets.remove(skt);
@@ -83,11 +92,42 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 					ConnectionHandler.getInstance().clients.remove(connection);
 					skt.close();
 					
-				} else {
-					connectionHandler.tellEveryone(userName + ": " + input + "\n");
-					client.packagesPerSecondSentTo++;
-					PanelConnection.updateRows();
 				}
+				if (input.equalsIgnoreCase("New Player")) {
+					System.out.println("NEW PLAYER DETECTED"); //TODO i don't get it..
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					System.out.println("NEW PLAYER DETECTED");
+					//ConnectionHandler.getInstance().tcpSender.
+					PrintWriter outMsg = ConnectionHandler.getInstance().outputSockets.get(skt);
+					ArrayList<Entity> playerAndMainBase = new ArrayList<Entity>();
+					Entity player = World.getInstance().getBattleField().getPlayers().get(0); //TODO Marwin: Vorsicht! 1. Player? Ändern!
+					Entity mainBase = World.getInstance().getBattleField().getMainBase();
+					playerAndMainBase.add(player);
+					playerAndMainBase.add(mainBase);
+					
+					PacketSerializer serializer = new PacketSerializer();
+					byte[] message = serializer.constructUDPPackage(playerAndMainBase);
+
+							DataOutputStream dOut = new DataOutputStream(skt.getOutputStream());
+
+							dOut.writeInt(message.length); // write length of the message
+							dOut.write(message); 
+							dOut.flush();
+					
+					
+					}
+				
+					//connectionHandler.tellEveryone(userName + ": " + input + "\n");
+					//client.packagesPerSecondSentTo++;
+					//PanelConnection.updateRows();
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

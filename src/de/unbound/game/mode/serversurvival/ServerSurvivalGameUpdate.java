@@ -33,7 +33,6 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 
 	@Override
 	public void updateWaveHandler(double deltaTime) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override

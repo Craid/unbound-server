@@ -6,7 +6,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import de.unbound.game.network.EntitySerializer;
+import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
 
@@ -17,14 +17,13 @@ public class UDPThreadReceiver extends Thread{
 	private boolean running = false;
 	private int countToCheck = 0;
 	private final String logName = "[UDP Receiver] "; //für logs
-	private static EntitySerializer entitySerializer = new EntitySerializer();
+	private static PacketSerializer entitySerializer = new PacketSerializer();
 	
 	public UDPThreadReceiver(int portNumber) {
 			try {
 				this.socket = new DatagramSocket(portNumber); // Dieser Socket LISTENED auf diesen Port
 				System.out.println(logName+"Started with Port: "+portNumber);
 			} catch (SocketException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 	}

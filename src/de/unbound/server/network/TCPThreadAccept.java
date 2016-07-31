@@ -25,13 +25,9 @@ public class TCPThreadAccept extends Thread{
 				Socket skt = srvSkt.accept();
 				ClientConnection newConnection = new ClientConnection(skt.getInetAddress(),skt.getPort()); //bspw. 242.12.42.11:22802
 				
-				
-				
 				newConnection.playerID = ConnectionHandler.getInstance().getLowestIdFromConnectionList(); //Player ID
 				ConnectionHandler.getInstance().clients.add(newConnection); // 
-				
 				PanelConnection.insertNewValueToTable(newConnection);
-				
 				
 				System.out.println("Accepted: " + skt.getInetAddress()
 						+ ":" + skt.getPort());

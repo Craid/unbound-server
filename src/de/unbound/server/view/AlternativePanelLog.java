@@ -57,7 +57,6 @@ public class AlternativePanelLog extends JPanel {
 			};
 			d.start();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
