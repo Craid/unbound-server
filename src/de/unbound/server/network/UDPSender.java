@@ -18,9 +18,13 @@ public class UDPSender extends Thread{
 	private DatagramPacket packet;
 	private int portNumber;
 	private final String logName = "[UDP Sender] "; //für logs
+	PacketSerializer serializer;
+	ByteBuilderHelper byteBuilder;
 	
 	public UDPSender(DatagramSocket sharedSocketWithReceiver) {
 		packet = new DatagramPacket(new byte[0], 0);
+		this.serializer = new PacketSerializer();
+		this.byteBuilder = new ByteBuilderHelper();
 			
 				this.socket = sharedSocketWithReceiver; // Dieser Socket LISTENED auf diesen Port
 				System.out.println(logName+"Started with Port: "+sharedSocketWithReceiver.getLocalPort());
@@ -29,11 +33,12 @@ public class UDPSender extends Thread{
 	}
 	public void sendAllEntitiesToAllPlayers(){
 		//Package bauen
-		PacketSerializer helper = new PacketSerializer();
-		byte[] allEntitiesAndTimeStamp = helper.constructUDPPackage(World.getInstance().getBattleField().getGameObjects());
-		PacketDeserializer d = new PacketDeserializer();
+		byte[] allEntitiesAndTimeStamp = serializer.constructUDPPackage(World.getInstance().getBattleField().getGameObjects());
+		//PacketDeserializer d = new PacketDeserializer();
 		//for(DeserializedEntity e : d.getDeserializedEntityFromByteArray(allEntitiesAndTimeStamp, 8))
-			//System.out.println(e.posX + " : " + e.posY);
+		//	System.out.println(e.posX + " : " + e.posY);
+		//2147483647 = max int
+		
 		
 		//System.out.println("\n\n\n\n\n");
 		
