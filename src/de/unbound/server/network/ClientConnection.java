@@ -14,8 +14,10 @@ int playerID;
 String playerName;
 
 float latency;
-float packagesPerSecondReceived;
-float packagesPerSecondSentTo;
+long tcpPackagesReceived;
+long tcpPackagesSentTo;
+long udpPackagesReceived;
+long udpPackagesSentTo;
 
 
 public ClientConnection(){
@@ -31,9 +33,9 @@ public void init(){
 	statusTCP = "Pending...";
 	statusUDP = "Pending...";
 	clientPortTCP = 0;
-	clientPortUDP = 0;
-	packagesPerSecondReceived = 0;
-	packagesPerSecondSentTo = 0;
+	clientPortUDP = 10000;
+	tcpPackagesReceived = 0;
+	tcpPackagesSentTo = 0;
 	playerName = "Pending...";
 	playerID = 0;
 	try {
@@ -92,19 +94,38 @@ public float getLatency() {
 public void setLatency(float latency) {
 	this.latency = latency;
 }
-public float getPackagesPerSecondReceived() {
-	return packagesPerSecondReceived;
-}
-public void setPackagesPerSecondReceived(float packagesPerSecondReceived) {
-	this.packagesPerSecondReceived = packagesPerSecondReceived;
-}
-public float getPackagesPerSecondSentTo() {
-	return packagesPerSecondSentTo;
-}
-public void setPackagesPerSecondSentTo(float packagesPerSecondSentTo) {
-	this.packagesPerSecondSentTo = packagesPerSecondSentTo;
+
+public long getTcpPackagesReceived() {
+	return tcpPackagesReceived;
 }
 
+public void setTcpPackagesReceived(long tcpPackagesReceived) {
+	this.tcpPackagesReceived = tcpPackagesReceived;
+}
+
+public long getTcpPackagesSentTo() {
+	return tcpPackagesSentTo;
+}
+
+public void setTcpPackagesSentTo(long tcpPackagesSentTo) {
+	this.tcpPackagesSentTo = tcpPackagesSentTo;
+}
+
+public long getUdpPackagesReceived() {
+	return udpPackagesReceived;
+}
+
+public void setUdpPackagesReceived(long udpPackagesReceived) {
+	this.udpPackagesReceived = udpPackagesReceived;
+}
+
+public long getUdpPackagesSentTo() {
+	return udpPackagesSentTo;
+}
+
+public void setUdpPackagesSentTo(long udpPackagesSentTo) {
+	this.udpPackagesSentTo = udpPackagesSentTo;
+}
 
 
 }

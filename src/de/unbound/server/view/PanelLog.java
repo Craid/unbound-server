@@ -10,6 +10,8 @@ import javax.swing.JTextArea;
 
 public class PanelLog extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+
 	JTextArea area;
 	Date date;
 	static final SimpleDateFormat sdf = new SimpleDateFormat(

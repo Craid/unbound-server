@@ -1,6 +1,7 @@
 package de.unbound.server.view;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -18,7 +19,9 @@ import de.unbound.server.network.ConnectionHandler;
 
 public class FrameMain extends JFrame{
 
-	JPanel gamePanel, northPanel, southPanel;
+	private static final long serialVersionUID = 1L;
+
+	JPanel gamePanel, northPanel, centerPanel;
 	JPanel connectionPanel, buttonPanel;
 	AlternativePanelLog logPanel;
 	ApplicationListener game;
@@ -39,7 +42,7 @@ public class FrameMain extends JFrame{
 	}
 	
 	public void initializeJFrame(){
-		this.setSize(750, 800);
+		this.setSize(900, 800);
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final JFrame thisFrame = this;
@@ -74,11 +77,13 @@ public class FrameMain extends JFrame{
 		config.forceExit = true;
 		game = new ServerGame();
 		canvas = new LwjglCanvas(game,config);
-		this.add(canvas.getCanvas(),"Center");
+		canvas.getCanvas().setPreferredSize(new Dimension(252,650));
+		gamePanel.add(canvas.getCanvas());
+		this.add(gamePanel,"East");
 	}
 	public void attachPanels(){
 		northPanel = new JPanel();
-		southPanel = new JPanel();
+		centerPanel = new JPanel();
 		
 		northPanel.setLayout(new BorderLayout());
 		connectionPanel = new PanelConnection();
@@ -88,11 +93,11 @@ public class FrameMain extends JFrame{
 		
 		this.add(northPanel,"North");
 		
-		southPanel.setLayout(new BorderLayout());
+		centerPanel.setLayout(new BorderLayout());
 		logPanel = AlternativePanelLog.getInstance();
-		southPanel.add(logPanel);
+		centerPanel.add(logPanel);
 		
-		this.add(southPanel,"South");
+		this.add(centerPanel,"Center");
 		//System.out.println("successfully attached all Panels");
 	}
 }

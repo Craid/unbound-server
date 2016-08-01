@@ -4,8 +4,13 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
 import java.net.UnknownHostException;
+
+import de.unbound.game.World;
+import de.unbound.game.network.serialization.ByteBuilderHelper;
+import de.unbound.game.network.serialization.PacketDeserializer;
+import de.unbound.game.network.serialization.PacketDeserializer.DeserializedEntity;
+import de.unbound.game.network.serialization.PacketSerializer;
 
 public class UDPSender extends Thread{
 
@@ -14,17 +19,31 @@ public class UDPSender extends Thread{
 	private int portNumber;
 	private final String logName = "[UDP Sender] "; //für logs
 	
-	public UDPSender(int portNumber) {
+	public UDPSender(DatagramSocket sharedSocketWithReceiver) {
 		packet = new DatagramPacket(new byte[0], 0);
-			try {
-				this.socket = new DatagramSocket(portNumber); // Dieser Socket LISTENED auf diesen Port
-				System.out.println(logName+"Started with Port: "+portNumber);
-			} catch (SocketException e) {
-				e.printStackTrace();
-			} 
-			this.portNumber = portNumber;
+			
+				this.socket = sharedSocketWithReceiver; // Dieser Socket LISTENED auf diesen Port
+				System.out.println(logName+"Started with Port: "+sharedSocketWithReceiver.getLocalPort());
+		
+			this.portNumber = sharedSocketWithReceiver.getLocalPort();
 	}
-	
+	public void sendAllEntitiesToAllPlayers(){
+		//Package bauen
+		PacketSerializer helper = new PacketSerializer();
+		byte[] allEntitiesAndTimeStamp = helper.constructUDPPackage(World.getInstance().getBattleField().getGameObjects());
+		PacketDeserializer d = new PacketDeserializer();
+		for(DeserializedEntity e : d.getDeserializedEntityFromByteArray(allEntitiesAndTimeStamp, 8))
+			System.out.println(e.posX + " : " + e.posY);
+		
+		System.out.println("\n\n\n\n\n");
+		
+		this.packet.setData(allEntitiesAndTimeStamp);
+		// for each alle clients
+		for (ClientConnection c : ConnectionHandler.getInstance().clients){
+			sendData(allEntitiesAndTimeStamp,c.getClientIP(),c.getClientPortUDP());
+		}
+		// send
+	}
 	
 	public void sendData(byte[] data, InetAddress ipAddressReceiver, int portReceiver){
 		packet.setData(data,0,data.length); //data;offset;länge des Packets
@@ -39,16 +58,13 @@ public class UDPSender extends Thread{
 		}
 	}
 	
-	public void sendAllEntitiesToAllPlayers(){
-		
-	}
-	
+
 	
 	public void sendEmptyDataToSelf(){ //in order to close socket
 		byte[] data = "exit".getBytes();
 		packet.setData(data,0,data.length); //data;offset;länge des Packets
 		try {
-			sendData(data, InetAddress.getLocalHost(), portNumber-1);
+			sendData(data, InetAddress.getLocalHost(), portNumber);
 		} catch (UnknownHostException e2) {
 			e2.printStackTrace();
 		}

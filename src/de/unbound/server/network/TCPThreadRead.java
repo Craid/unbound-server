@@ -1,16 +1,10 @@
 package de.unbound.server.network;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 
-import de.unbound.game.World;
-import de.unbound.game.model.entities.Entity;
-import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
 
@@ -73,8 +67,8 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 				input = br.readLine();
 				System.out.println(logName+" TCP Message from: "+skt.getInetAddress().getHostName()+":"+skt.getPort()+"->"+input);
 				checkInput(input);
-				client.packagesPerSecondReceived++;
-		
+				client.tcpPackagesReceived++;
+				PanelConnection.updateRows();
 				
 					tcpSender.tellOne("ich schicke einfach mal so ne Nachricht",skt);
 					//client.packagesPerSecondSentTo++;
@@ -98,6 +92,10 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	}
 	public void checkInput(String input){
 
+		if (input.matches("[0-9]+") && input.length() > 2) {
+			client.clientPortUDP = new Integer(input);
+		}
+		
 		if (input.equalsIgnoreCase("EXIT")) {
 			exitProcedure();	
 		}

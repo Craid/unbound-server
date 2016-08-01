@@ -1,8 +1,8 @@
 package de.unbound.game.mode.serversurvival;
 
+import de.unbound.game.BattleField;
 import de.unbound.game.factories.EntityFactory;
 import de.unbound.game.mode.WaveHandler;
-import de.unbound.game.mode.local.LocalEndlessEntityFactory;
 import de.unbound.game.model.entities.WaveOrder;
 
 public class ServerSurvivalWaveHandler extends WaveHandler {
@@ -48,6 +48,13 @@ public class ServerSurvivalWaveHandler extends WaveHandler {
 		int scavenger = level%5;
 		int pawn = (level%5) * 3;
 		return new WaveOrder(boss, pawn, scavenger, commander);
+	}
+	
+	@Override
+	public void initializeMap(BattleField battleField) {
+		getEnemyFactory().createSpawner();
+		getOwnFactory().createMap(this.getSeed());
+		battleField.update(0); //initial update to write Entities to list
 	}
 	
 }

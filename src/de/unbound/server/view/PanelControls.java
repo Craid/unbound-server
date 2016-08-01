@@ -16,18 +16,16 @@ import javax.swing.SwingConstants;
 import de.unbound.server.network.ConnectionHandler;
 
 public class PanelControls extends JPanel {
+	
+
+	private static final long serialVersionUID = 1L;
+
 	private static JTextField txtPort;
 	boolean toggleServer = true;
 	final static JButton btnStopServer = new JButton("Stop Server");
 	final static JButton btnStartServer = new JButton("Start Server");
-	/**
-	 * Create the panel.
-	 */
-	
 
 	public PanelControls() {
-		
-		
 		btnStartServer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConnectionHandler.getInstance().setPortNumber(PanelControls.getTxtPort());
@@ -37,14 +35,13 @@ public class PanelControls extends JPanel {
 		});
 		btnStartServer.setSize(new Dimension(150, 0));
 		
-		
 		btnStopServer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ConnectionHandler.getInstance().stopServer();
 				PanelControls.toggleButtons();
-			
 			}
 		});
+		
 		btnStopServer.setMaximumSize(new Dimension(91, 23));
 		btnStopServer.setSize(new Dimension(150, 0));
 		btnStopServer.setEnabled(!toggleServer);

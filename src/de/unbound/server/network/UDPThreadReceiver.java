@@ -12,10 +12,12 @@ import de.unbound.server.view.PanelConnection;
 
 public class UDPThreadReceiver extends Thread{
 
-	private DatagramSocket socket;
+	public DatagramSocket socket;
 	private int portNumber;
 	private boolean running = false;
 	private int countToCheck = 0;
+	private ClientConnection c;
+	public DatagramPacket lastPacket;
 	private final String logName = "[UDP Receiver] "; //für logs
 	private static PacketSerializer entitySerializer = new PacketSerializer();
 	
@@ -28,19 +30,20 @@ public class UDPThreadReceiver extends Thread{
 			} 
 	}
 	
-	
 	public void run(){
 		running = true;
 		while (running){
 			byte[] data = new byte[2048];
-			DatagramPacket packet = new DatagramPacket(data, data.length);
+			lastPacket = new DatagramPacket(data, data.length);
 			System.out.println(logName+ "Locking... Waiting for a Packet...");
 			try {
-				socket.receive(packet); // Diese Methode "blockt" solange, bis ein Packet ankommt!
+				socket.receive(lastPacket); // Diese Methode "blockt" solange, bis ein Packet ankommt!
+				checkIfPlayerAlreadyInList(lastPacket.getAddress(), lastPacket.getPort());
+				checkInput(lastPacket);
 				countToCheck++;
-				String message = new String(packet.getData());
+				String message = new String(lastPacket.getData());
 				if (message.trim().equalsIgnoreCase("exit")) break;
-				checkIfPlayerAlreadyInList(packet.getAddress(), packet.getPort());
+				
 				System.out.println(logName+"I got a Packet!");
 				//byte[] player = entitySerializer.getPlayerAsByteArray(); // das ist nur aus testzwecken hier
 				//ConnectionHandler.getInstance().udpSender.sendData(player,packet.getAddress(), packet.getPort());
@@ -48,8 +51,8 @@ public class UDPThreadReceiver extends Thread{
 				// Irgendetwas ist schief gelaufen..
 				e.printStackTrace();
 			}
-			String message = new String(packet.getData()); // hier versuchen wir aus dem Packet den String zu lesen
-			System.out.println(logName+"Got a Packet from: > ["+ packet.getAddress().getHostAddress()+":"+packet.getPort()+"]: \n"+"Message: "+ message);
+			String message = new String(lastPacket.getData()); // hier versuchen wir aus dem Packet den String zu lesen
+			System.out.println(logName+"Got a Packet from: > ["+ lastPacket.getAddress().getHostAddress()+":"+lastPacket.getPort()+"]: \n"+"Message: "+ message);
 			if (message.trim().equalsIgnoreCase("exit")){
 				//System.out.println(logName+"Returning pong...");
 				//sendData((Integer.toString(packet.getPort())).getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
@@ -65,6 +68,17 @@ public class UDPThreadReceiver extends Thread{
 		System.out.println(logName+"Closed!");
 	}
 	
+
+	public void checkInput(DatagramPacket input){
+		String message = new String(lastPacket.getData());
+		
+		if (message.trim().equalsIgnoreCase("ClientUDP")){
+			ConnectionHandler.getInstance().udpSender.sendData("Hi it's the Server!".getBytes(), lastPacket.getAddress(), lastPacket.getPort());
+			c.udpPackagesSentTo++;
+		}
+		
+	}
+	
 	public void checkIfPlayerAlreadyInList(InetAddress ip,int port){
 		boolean checkIfAlreadyInList = false;
 		for (ClientConnection c : ConnectionHandler.getInstance().clients)
@@ -76,7 +90,9 @@ public class UDPThreadReceiver extends Thread{
 				//if (port == c.getClientPortTCP()){
 				System.out.println("Player is already known to the System");
 				//System.exit(1);
-				c.packagesPerSecondReceived++;
+				this.c = c;
+				c.udpPackagesReceived++;
+				c.clientPortUDP = port;
 				checkIfAlreadyInList = true;
 				PanelConnection.updateRows();
 				//}
@@ -93,19 +109,11 @@ public class UDPThreadReceiver extends Thread{
 				newConnection.setClientPortUDP(port);
 				ConnectionHandler.getInstance().clients.add(newConnection); // 
 				
-				PanelConnection.insertNewValueToTable(newConnection);
+				//PanelConnection.insertNewValueToTable(newConnection);
 				PanelConnection.updateRows();
 				
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public void toggleRunning(){
 		running = !running;
@@ -114,10 +122,8 @@ public class UDPThreadReceiver extends Thread{
 		running = active;
 	}
 	
-	
 	public int getPortNumber(){
 		return portNumber;
 	}
-	
 	
 }

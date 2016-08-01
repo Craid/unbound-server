@@ -6,30 +6,28 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.sun.jmx.remote.internal.ClientCommunicatorAdmin;
 
 import de.unbound.game.GameCamera;
 import de.unbound.game.World;
 import de.unbound.game.mode.AbstractGameUpdate;
 import de.unbound.game.model.entities.Entity;
+import de.unbound.server.network.ConnectionHandler;
 import de.unbound.utility.UnboundConstants;
 
 public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	private BitmapFont font;
 	private SpriteBatch batch;
-	private SpriteBatch hudBatch;
 	private Sprite bathTub;
 	
 	public ServerSurvivalGameUpdate() {
-		initAbstract(new ServerSurvivalCollisionDetection());
+		super(new ServerSurvivalCollisionDetection());
 		init();
 	}
 
 	protected void init() {
 		batch = new SpriteBatch();
-		hudBatch = new SpriteBatch();
 		int width = UnboundConstants.WORLDWIDTH*battleField.getScaleX();
 		int height = UnboundConstants.WORLDHEIGHT*battleField.getScaleY();
 		camera = new GameCamera(width,height);
@@ -49,7 +47,7 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	@Override
 	public void doBeforeUpdate() {
-		//Do nothing
+		ConnectionHandler.getInstance().udpSender.sendAllEntitiesToAllPlayers();
 	}
 
 	@Override
@@ -86,10 +84,10 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	private void renderGameOver() {
 		render();
-		hudBatch.begin();
+		batch.begin();
 		String temp = "GameOver!";
-		font.draw(hudBatch, temp, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-		hudBatch.end();
+		font.draw(batch, temp, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+		batch.end();
 	}
 
 	private void updateCameraPosition(){
@@ -110,5 +108,19 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 		sprite.setRotation(e.getDirection().angle());
 		if(World.getInstance().isOnScreen(e))
 			sprite.draw(batch);
+	}
+
+	@Override
+	public boolean isPaused() {
+		return battleField.getPlayers().size() == 0;
+	}
+
+	@Override
+	public void onGamePaused() {
+		render();
+		battleField.update(0);
+		batch.begin();
+		font.draw(batch, "Paused", Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+		batch.end();
 	}
 }

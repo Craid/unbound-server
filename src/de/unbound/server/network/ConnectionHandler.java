@@ -2,10 +2,13 @@ package de.unbound.server.network;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import de.unbound.server.view.PanelConnection;
 
 public class ConnectionHandler {
 
@@ -43,11 +46,12 @@ public class ConnectionHandler {
 		stopTCP();
 		stopUDP();
 		clients.clear();
+		PanelConnection.updateRows();
 	}
 	public void startUDP(){
 		udpReceiver = new UDPThreadReceiver(portNumber+1);
 		udpReceiver.start();
-		udpSender = new UDPSender(portNumber+2);
+		udpSender = new UDPSender(udpReceiver.socket);
 	}
 	public void stopUDP(){
 		udpReceiver.setRunning(false);
@@ -91,7 +95,26 @@ public class ConnectionHandler {
 		}
 	}
 	
-
+	public ClientConnection getClientConnection(InetAddress ip,int port){
+		boolean checkIfAlreadyInList = false;
+		for (ClientConnection c : ConnectionHandler.getInstance().clients)
+		{
+			
+			
+			//System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
+			if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(ip.getHostAddress().trim())) {
+				if (port == c.getClientPortTCP()){
+				System.out.println("Player is already known to the System");
+				//System.exit(1);
+				checkIfAlreadyInList = true;
+				PanelConnection.updateRows();
+				return c;
+				}
+			}
+			
+		}
+		return null;
+	}
 	
 	public void tellEveryone(String msg){
 		tcpSender.tellEveryone(msg);
@@ -118,6 +141,6 @@ public class ConnectionHandler {
 		for (ClientConnection c : clients){
 			if (c.playerID<=i) i++;
 		}
-		return i;
+		return 111;
 	}
 }
