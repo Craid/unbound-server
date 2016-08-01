@@ -32,10 +32,10 @@ public class UDPSender extends Thread{
 		PacketSerializer helper = new PacketSerializer();
 		byte[] allEntitiesAndTimeStamp = helper.constructUDPPackage(World.getInstance().getBattleField().getGameObjects());
 		PacketDeserializer d = new PacketDeserializer();
-		for(DeserializedEntity e : d.getDeserializedEntityFromByteArray(allEntitiesAndTimeStamp, 8))
-			System.out.println(e.posX + " : " + e.posY);
+		//for(DeserializedEntity e : d.getDeserializedEntityFromByteArray(allEntitiesAndTimeStamp, 8))
+			//System.out.println(e.posX + " : " + e.posY);
 		
-		System.out.println("\n\n\n\n\n");
+		//System.out.println("\n\n\n\n\n");
 		
 		this.packet.setData(allEntitiesAndTimeStamp);
 		// for each alle clients
@@ -49,7 +49,7 @@ public class UDPSender extends Thread{
 		packet.setData(data,0,data.length); //data;offset;länge des Packets
 		packet.setAddress(ipAddressReceiver); // 188.58.54.66 example
 		packet.setPort(portReceiver);// 11333 = Port
-		System.out.println(logName+" Trying to Send the Data to a Client...");
+		//System.out.println(logName+" Trying to Send the Data to a Client...");
 		try {
 			this.socket.send(packet);
 			
