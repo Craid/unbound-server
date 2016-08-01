@@ -2,16 +2,11 @@ package de.unbound.server.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 public class PanelLog extends JPanel {
 

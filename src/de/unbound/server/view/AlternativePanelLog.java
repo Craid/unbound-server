@@ -52,7 +52,6 @@ public class AlternativePanelLog extends JPanel {
 							// Handle ex
 						}
 					}
-
 				}
 			};
 			d.start();

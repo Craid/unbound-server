@@ -38,10 +38,12 @@ public class UDPThreadReceiver extends Thread{
 			try {
 				socket.receive(packet); // Diese Methode "blockt" solange, bis ein Packet ankommt!
 				countToCheck++;
+				String message = new String(packet.getData());
+				if (message.trim().equalsIgnoreCase("exit")) break;
 				checkIfPlayerAlreadyInList(packet.getAddress(), packet.getPort());
 				System.out.println(logName+"I got a Packet!");
-				byte[] player = entitySerializer.getPlayerAsByteArray(); // das ist nur aus testzwecken hier
-				ConnectionHandler.getInstance().udpSender.sendData(player,packet.getAddress(), packet.getPort());
+				//byte[] player = entitySerializer.getPlayerAsByteArray(); // das ist nur aus testzwecken hier
+				//ConnectionHandler.getInstance().udpSender.sendData(player,packet.getAddress(), packet.getPort());
 			} catch (IOException e) {
 				// Irgendetwas ist schief gelaufen..
 				e.printStackTrace();

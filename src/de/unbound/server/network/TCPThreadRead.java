@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 import de.unbound.game.World;
 import de.unbound.game.model.entities.Entity;
-import de.unbound.game.network.serialization.ByteBuilderHelper;
 import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
@@ -23,6 +22,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	private BufferedReader br;
 	private String userName;
 	private ClientConnection client;
+	private TCPSender tcpSender;
 	private final String logName = "[TCP Reader] "; //für logs
 	
 	
@@ -31,6 +31,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			this.connectionHandler = connectionHandler;
 			this.skt = skt;
 			this.client = c;
+			this.tcpSender = connectionHandler.tcpSender;
 			br = new BufferedReader(new InputStreamReader(
 					skt.getInputStream()));
 		} catch (IOException e) {
@@ -70,36 +71,12 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			try {
 				//System.out.println("Trying to read line");
 				input = br.readLine();
-				System.out.println(logName+" TCP Package Message: "+input);
-				
+				System.out.println(logName+" TCP Message from: "+skt.getInetAddress().getHostName()+":"+skt.getPort()+"->"+input);
+				checkInput(input);
 				client.packagesPerSecondReceived++;
-				if (input.equalsIgnoreCase("EXIT")) {
-					exitProcedure();	
-				}
-				if (input.equalsIgnoreCase("New Player")) {
-					System.out.println(logName+"NEW PLAYER DETECTED"); //TODO i don't get it..
-					//ConnectionHandler.getInstance().tcpSender.
-					PrintWriter outMsg = ConnectionHandler.getInstance().outputSockets.get(skt);
-					ArrayList<Entity> playerAndMainBase = new ArrayList<Entity>();
-					Entity player = World.getInstance().getBattleField().getPlayers().get(0); //TODO Marwin: Vorsicht! 1. Player? Ändern!
-					Entity mainBase = World.getInstance().getBattleField().getMainBase();
-					playerAndMainBase.add(player);
-					playerAndMainBase.add(mainBase);
-					
-					PacketSerializer serializer = new PacketSerializer();
-					byte[] message = serializer.constructUDPPackage(playerAndMainBase);
-
-							DataOutputStream dOut = new DataOutputStream(skt.getOutputStream());
-
-							dOut.writeInt(message.length); // write length of the message
-							dOut.write(message); 
-							dOut.flush();
-							System.out.println("Sent Player and Main Base");
-					
-					
-					}
+		
 				
-					connectionHandler.tellEveryone("jou ALPHA");
+					tcpSender.tellOne("ich schicke einfach mal so ne Nachricht",skt);
 					//client.packagesPerSecondSentTo++;
 					//PanelConnection.updateRows();
 				
@@ -119,7 +96,27 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 		} 
 		connectionHandler.outputSockets.remove(skt);
 	}
-	
+	public void checkInput(String input){
+
+		if (input.equalsIgnoreCase("EXIT")) {
+			exitProcedure();	
+		}
+		if (input.equalsIgnoreCase("New Player")) {
+			System.out.println(logName+"NEW PLAYER DETECTED"); //TODO i don't get it..
+			//ConnectionHandler.getInstance().tcpSender.
+			
+			tcpSender.sendPlayerAndMainBase(skt);
+			/*
+					DataOutputStream dOut = new DataOutputStream(skt.getOutputStream());
+
+					dOut.writeInt(message.length); // write length of the message
+					dOut.write(message); 
+					dOut.flush();
+					System.out.println("Sent Player and Main Base");
+			*/
+			
+			}
+	}
 	public void exitProcedure(){
 		connectionHandler.outputSockets.remove(skt);
 		connectionHandler.tellEveryone(userName + " has signed off.\n");

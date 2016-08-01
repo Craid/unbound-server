@@ -24,7 +24,7 @@ public class ServerSurvivalWaveHandler extends WaveHandler {
 	 * @return
 	 */
 	public static ServerSurvivalWaveHandler createServerSurvivalWaveHandlerPreset() {
-		return new ServerSurvivalWaveHandler(new LocalEndlessEntityFactory("Prelate", false),new LocalEndlessEntityFactory("Duck", true));
+		return new ServerSurvivalWaveHandler(new ServerSurvivalEntityFactory("Prelate", false),new ServerSurvivalEntityFactory("Duck", true));
 	}
 	
 	@Override

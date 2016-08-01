@@ -1,27 +1,19 @@
 package de.unbound.server.view;
 
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-
-import javax.swing.SpringLayout;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.SwingConstants;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-
-import javax.swing.JLabel;
-
 import de.unbound.server.network.ConnectionHandler;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class PanelControls extends JPanel {
 	private static JTextField txtPort;
