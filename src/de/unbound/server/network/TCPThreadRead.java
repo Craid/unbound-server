@@ -70,7 +70,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 				client.tcpPackagesReceived++;
 				PanelConnection.updateRows(connectionHandler);
 				
-					tcpSender.tellOne("ich schicke einfach mal so ne Nachricht",skt);
+					tcpSender.tellOne("Ich habe deine TCP-Nachricht bekommen",skt);
 					//client.packagesPerSecondSentTo++;
 					//PanelConnection.updateRows();
 				
