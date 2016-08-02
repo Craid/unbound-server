@@ -53,9 +53,9 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	@Override
 	public void doBeforeUpdate() {
-		if(timer++>8){
+		//if(timer++>4){
 			connectionHandler.udpSender.sendAllEntitiesToAllPlayers(battleField);
-		} 
+		//} 
 		updateHelper.updateReceivedPlayers();
 	}
 	
@@ -72,11 +72,6 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 				e.setHp(e.getModel().getInitialHP());
 				e.setActive(true);
 				ClientConnection client = connectionHandler.getClientConnectionByPlayerID(e.getId());
-				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
-				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
-				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
-				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
-				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
 				connectionHandler.tcpSender.tellOne("Respawn", client.getSocket());
 			}
 		}

@@ -37,8 +37,8 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 		System.out.println("Waiting for Username from " + skt.getPort());
 		try {
 			userName = br.readLine();
-			
-			connectionHandler.tellEveryone(userName + " has joined the Chat!\n");
+			client.tcpPackagesReceived++;
+			connectionHandler.tellEveryone(userName + " has joined the game!\n");
 			client.setPlayerName(userName);
 			PanelConnection.updateRows(connectionHandler);
 		} catch (IOException e) {
@@ -67,6 +67,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 				input = br.readLine();
 				System.out.println(logName+" TCP Message from: "+skt.getInetAddress().getHostName()+":"+skt.getPort()+"->"+input);
 				checkInput(input);
+				client.appendCommands(input);
 				client.tcpPackagesReceived++;
 				PanelConnection.updateRows(connectionHandler);
 				
@@ -95,7 +96,6 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 		if (input.matches("[0-9]+") && input.length() > 2) {
 			client.clientPortUDP = new Integer(input);
 		}
-		
 		if (input.equalsIgnoreCase("EXIT")) {
 			exitProcedure();	
 		}

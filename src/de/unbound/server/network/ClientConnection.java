@@ -19,6 +19,7 @@ InetAddress clientIP;
 	DatagramPacket lastPlayerPacket;
 	PacketDeserializer entityDeserializer;
 	Socket clientSocket;
+	String commands;
 
 	float latency;
 	long tcpPackagesReceived;
@@ -40,6 +41,7 @@ InetAddress clientIP;
 	}
 
 	public void init() {
+		commands = "";
 		statusTCP = "Pending...";
 		statusUDP = "Pending...";
 		clientPortTCP = 0;
@@ -55,6 +57,25 @@ InetAddress clientIP;
 			e.printStackTrace();
 		}
 	}
+	
+	public String[] getCommands() {
+		String[] allCommands = new String[0];
+		if (commands.length() != 0) {
+			synchronized (commands) {
+				allCommands = new String(commands).split("\n");
+				commands = "";
+			}
+		}
+		return allCommands;
+	}
+
+	public void appendCommands(String commands) {
+		synchronized (this.commands) {
+			this.commands += commands + "\n";
+		}
+	}
+	
+	
 
 	public InetAddress getClientIP() {
 		return clientIP;
