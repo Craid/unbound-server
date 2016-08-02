@@ -13,6 +13,7 @@ import de.unbound.game.mode.serversurvival.util.NetworkUpdateHelper;
 import de.unbound.game.model.entities.Entity;
 import de.unbound.server.UnboundServerConstants;
 import de.unbound.server.UnboundServerConstants.Status;
+import de.unbound.server.network.ClientConnection;
 import de.unbound.server.network.ConnectionHandler;
 import de.unbound.utility.UnboundConstants;
 
@@ -66,6 +67,19 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	@Override
 	public void doAfterUpdate() {
 		render();
+		for(Entity e : battleField.getPlayers()){
+			if(!e.isActive()){
+				e.setHp(e.getModel().getInitialHP());
+				e.setActive(true);
+				ClientConnection client = connectionHandler.getClientConnectionByPlayerID(e.getId());
+				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
+				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
+				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
+				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
+				System.out.println("Ist der Socket leer naaaaaaaaaaaaa???"+client.getSocket());
+				connectionHandler.tcpSender.tellOne("Respawn", client.getSocket());
+			}
+		}
 	}
 
 	

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import de.unbound.game.World;
 import de.unbound.game.model.entities.Entity;
 import de.unbound.game.network.serialization.PacketSerializer;
-import de.unbound.server.view.PanelConnection;
 
 public class TCPSender{
 	

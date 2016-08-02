@@ -95,7 +95,6 @@ public class FrameMain extends JFrame {
 		centerPanel.add(logPanel);
 
 		this.add(centerPanel, "Center");
-		// System.out.println("successfully attached all Panels");
 	}
 
 	private JPanel createButtonPanel() {

@@ -88,6 +88,16 @@ public class ConnectionHandler {
 		}
 	}
 	
+	public ClientConnection getClientConnectionByPlayerID(int id){
+		for (ClientConnection c : clients){
+			if (c.getPlayerID()==id){
+				return c;
+			}
+		}
+		return null;
+		
+	}
+	
 	public ClientConnection getClientConnection(InetAddress ip,int port){
 		System.out.println(logName+"looking for connections...");
 		for (ClientConnection c : clients)

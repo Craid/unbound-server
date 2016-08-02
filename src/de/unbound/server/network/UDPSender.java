@@ -59,6 +59,7 @@ public class UDPSender{
 		
 		for (ClientConnection c : connectionHandler.clients){
 			sendData(allEntitiesAndTimeStamp,c.getClientIP(),c.getClientPortUDP());
+			c.udpPackagesSentTo++;
 		}
 	}
 	

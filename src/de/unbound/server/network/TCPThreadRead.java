@@ -104,7 +104,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			
 			tcpSender.sendPlayerAndMainBase(skt);
 
-			}
+		}
 	}
 	public void exitProcedure(){
 		connectionHandler.outputSockets.remove(skt);

@@ -19,6 +19,7 @@ public class UDPThreadReceiver extends Thread{
 	private boolean running = false;
 	
 	public UDPThreadReceiver(ConnectionHandler connectionHandler, int portNumber) {
+		this.connectionHandler = connectionHandler;
 		try {
 			this.socket = new DatagramSocket(portNumber); 
 			System.out.println(logName+"Started with Port: "+portNumber);
@@ -39,7 +40,6 @@ public class UDPThreadReceiver extends Thread{
 				
 				checkInput(lastPacket);
 			} catch (Exception e){
-//				System.out.println(e);
 			}
 		}
 		System.out.println(logName+"Exiting the UDP Receive Loop!");
@@ -60,33 +60,24 @@ public class UDPThreadReceiver extends Thread{
 		}
 		if (message.length()>11){
 			getCorrespondentConnection(input).setLastPlayerPacket(input);
-			System.out.println("Last Packet is a player. Player set!");
 		}
 	}
 
 	public ClientConnection getCorrespondentConnection(DatagramPacket packet){
-		
 		InetAddress ip = packet.getAddress();
 		int port = packet.getPort();
-
-		System.out.println("[Receive Thread] " + connectionHandler.clients);
-		
 		for (ClientConnection client : connectionHandler.clients)
 		{
-			System.out.println("Receive Thread: " + client.getClientIP().getHostAddress().trim().equalsIgnoreCase(ip.getHostAddress().trim()));
-			System.out.println("Receive Thread: " + (client.getClientPortUDP() == port));
 		
 			if (client.getClientIP().getHostAddress().trim().equalsIgnoreCase(ip.getHostAddress().trim())) {
 				if (client.getClientPortUDP() == port){
-					System.out.println(ip.getHostName()+":"+port+" -> IP PORT UDP | We found you! You already established connection");
 					client.setLastPlayerPacket(packet);
-					client.tcpPackagesReceived++;
+					client.udpPackagesReceived++;
 					PanelConnection.updateRows(connectionHandler);
 					return client;
 				}
 			}
 		}
-		System.out.println("Hier nach der Schleife!");
 		return null;
 		
 	}
