@@ -2,6 +2,7 @@ package de.unbound.game.mode.serversurvival;
 
 import de.unbound.game.factories.EntityFactory;
 import de.unbound.game.model.entities.Entity;
+import de.unbound.game.model.state.move.MoveStateStraight;
 import de.unbound.game.model.state.update.UpdateStateImmobile;
 import de.unbound.game.model.state.update.UpdateStateMobile;
 import de.unbound.game.model.state.update.UpdateStateProjectile;
@@ -17,9 +18,10 @@ public class ServerSurvivalEntityFactory extends EntityFactory {
 	}
 	
 	public void updateTypeAttributes(Entity e,String type) {
-		if(type.contains(UnboundConstants.MobileEntity.Player.name()))
+		if(type.contains(UnboundConstants.MobileEntity.Player.name())){
 			e.setUpdateState(new UpdateStateMobile(e));
-		else if(type.contains(UnboundConstants.MobileEntity.Projectile.name()))
+			e.getUpdateState().setMove(new MoveStateStraight(e) );
+		}else if(type.contains(UnboundConstants.MobileEntity.Projectile.name()))
 			e.setUpdateState(new UpdateStateProjectile(e));
 		else if(!e.isImmobile())
 			e.setUpdateState(new UpdateStateMobile(e));

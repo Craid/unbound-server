@@ -10,11 +10,14 @@ import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
 public class TCPSender{
-	private ConnectionHandler connectionHandler;
+	
 	private final String logName = "[TCP Sender] "; //für logs
+	private ConnectionHandler connectionHandler;
+	private PacketSerializer serializer = new PacketSerializer();
 	
 	public TCPSender(ConnectionHandler connectionHandler) {
 			this.connectionHandler = connectionHandler;
+			this.serializer = new PacketSerializer();
 	}
 	
 	public void tellOne(String msg, Socket skt){
@@ -31,37 +34,33 @@ public class TCPSender{
 		
 	}
 	public void sendPlayerAndMainBase(Socket skt){
-		//creates new Player and sends it to Client!
-		//also sends the main base to client
-		PrintWriter outMsg = ConnectionHandler.getInstance().outputSockets.get(skt);
 		try{
-		//ArrayList<Entity> playerAndMainBase = new ArrayList<Entity>();
-		//Entity player = World.getInstance().getBattleField().getPlayers().get(0); //TODO Marwin: Vorsicht! 1. Player? Ändern!
-		Entity player = World.getInstance().getWaveHandler().getOwnFactory().createPlayer();
-		Entity mainBase = World.getInstance().getBattleField().getMainBase();
-		//playerAndMainBase.add(player);
-		//playerAndMainBase.add(mainBase);
-//		player.setPosition(new Vector2(new Vector2(UnboundConstants.WORLDWIDTH*World.getInstance().getBattleField().getScaleX()/ 2, UnboundConstants.SINGLEGRIDHEIGHT*2)));
-		ClientConnection client = ConnectionHandler.getInstance().getClientConnection(skt.getInetAddress(), skt.getPort());
-		client.playerID = player.getId();
-		PanelConnection.updateRows();
-		PacketSerializer serializer = new PacketSerializer();
-		byte[] playerStream = serializer.constructEntityByteStream(player);
-		byte[] baseStream = serializer.constructEntityByteStream(mainBase);
- 		
-		PrintWriter pw = connectionHandler.outputSockets.get(skt);
-		String send;
-		send = "Player:"+new String(playerStream)+"\n";
-		System.out.println("Player length: " + send.getBytes().length);
-		pw.write(send);
-		pw.flush();
-		client.tcpPackagesSentTo++;
-		send = "MainBase:"+new String(baseStream)+"\n";
-		pw.write(send);
-		pw.flush();
-		client.tcpPackagesSentTo++;
-		PanelConnection.updateRows();
-		} catch(Exception e){}
+			System.out.println(logName+"Trying to send player and Main Base");
+			Entity player = World.getInstance().getWaveHandler().getOwnFactory().createPlayer();
+			Entity mainBase = World.getInstance().getBattleField().getMainBase();
+			ClientConnection client = connectionHandler.getClientConnection(skt.getInetAddress(), skt.getPort());
+			client.playerID = player.getId();
+			byte[] playerStream = serializer.constructEntityByteStream(player);
+			byte[] baseStream = serializer.constructEntityByteStream(mainBase);
+	 		
+			PrintWriter pw = connectionHandler.outputSockets.get(skt);
+			String send;
+			send = "Player:"+new String(playerStream)+"\n";
+			pw.write(send);
+			pw.flush();
+			client.tcpPackagesSentTo++;
+			send = "MainBase:"+new String(baseStream)+"\n";
+			pw.write(send);
+			pw.flush();
+			client.tcpPackagesSentTo++;
+			//PanelConnection.updateRows(connectionHandler);
+			System.out.println(logName+"Successfully sent Player and Main Base");
+		} 
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			System.out.println(logName+"Trying to send player and Main Base");
+		}
 	}
 	
 	

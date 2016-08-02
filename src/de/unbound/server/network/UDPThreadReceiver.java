@@ -1,40 +1,28 @@
 package de.unbound.server.network;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import com.badlogic.gdx.math.Vector2;
-
-import de.unbound.game.World;
-import de.unbound.game.model.entities.Entity;
-import de.unbound.game.network.serialization.ByteBuilderHelper;
-import de.unbound.game.network.serialization.PacketDeserializer;
-import de.unbound.game.network.serialization.PacketDeserializer.DeserializedEntity;
-import de.unbound.game.network.serialization.PacketSerializer;
 import de.unbound.server.view.PanelConnection;
 
 
 public class UDPThreadReceiver extends Thread{
-
-	public DatagramSocket socket;
-	private int portNumber;
-	private boolean running = false;
-	private int countToCheck = 0;
-	private ClientConnection c;
-	public DatagramPacket lastPacket;
-	private ByteBuilderHelper helper;
-	private final String logName = "[UDP Receiver] "; //für logs
-	private static PacketSerializer entitySerializer = new PacketSerializer();
-	private static PacketDeserializer entityDeserializer = new PacketDeserializer();
 	
-	public UDPThreadReceiver(int portNumber) {
+	private final String logName = "[UDP Receiver] "; //für logs
+	public DatagramSocket socket;
+	public DatagramPacket lastPacket;
+	private ClientConnection c;
+	private ConnectionHandler connectionHandler;
+	private int portNumber;
+	
+	private boolean running = false;
+	
+	public UDPThreadReceiver(ConnectionHandler connectionHandler, int portNumber) {
 			try {
-				this.socket = new DatagramSocket(portNumber); // Dieser Socket LISTENED auf diesen Port
+				this.socket = new DatagramSocket(portNumber); 
 				System.out.println(logName+"Started with Port: "+portNumber);
-				helper = new ByteBuilderHelper();
 			} catch (SocketException e) {
 				e.printStackTrace();
 			} 
@@ -42,36 +30,21 @@ public class UDPThreadReceiver extends Thread{
 	
 	public void run(){
 		running = true;
+		byte[] data = new byte[2048];
 		while (running){
-			byte[] data = new byte[2048];
+			
 			lastPacket = new DatagramPacket(data, data.length);
-			//System.out.println(logName+ "Locking... Waiting for a Packet...");
 			try {
 				socket.receive(lastPacket); // Diese Methode "blockt" solange, bis ein Packet ankommt!
 				checkIfPlayerAlreadyInList(lastPacket.getAddress(), lastPacket.getPort());
 				checkInput(lastPacket);
-				countToCheck++;
-				String message = new String(lastPacket.getData());
-				if (message.trim().equalsIgnoreCase("exit")) break;
+				} 	
+					catch (Exception e)
+					{
 				
-				//System.out.println(logName+"I got a Packet!");
-			} catch (IOException e) {
-				// Irgendetwas ist schief gelaufen..
-				e.printStackTrace();
+					}
 			}
-			String message = new String(lastPacket.getData()); // hier versuchen wir aus dem Packet den String zu lesen
-			//System.out.println(logName+"Got a Packet from: > ["+ lastPacket.getAddress().getHostAddress()+":"+lastPacket.getPort()+"]: \n"+"Message: "+ message);
-			if (message.trim().equalsIgnoreCase("exit")){
-				//System.out.println(logName+"Returning pong...");
-				//sendData((Integer.toString(packet.getPort())).getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
-				//sendData("pong".getBytes(), packet.getAddress(), packet.getPort()); // getAddress/Port holt die IP Addresse/Port vom Sender!
-				
-				
-			
-				running = false;
-				System.out.println(logName+"Exiting the UDP Receive Loop!");
-			}
-		}
+		System.out.println(logName+"Exiting the UDP Receive Loop!");
 		socket.close();
 		System.out.println(logName+"Closed!");
 	}
@@ -81,39 +54,20 @@ public class UDPThreadReceiver extends Thread{
 		String message = new String(input.getData());
 		
 		if (message.trim().equalsIgnoreCase("ClientUDP")){
-			ConnectionHandler.getInstance().udpSender.sendData("Hi it's the Server!".getBytes(), input.getAddress(), input.getPort());
+			connectionHandler.udpSender.sendData("Hi it's the Server!".getBytes(), input.getAddress(), input.getPort());
 			c.udpPackagesSentTo++;
 		}
+		if (message.trim().equalsIgnoreCase("exit")){
+			running = false;
+		}
 		if (message.length()>11){
-			byte[] sum = input.getData();
-			//System.out.println(helper.intFromByteArray(sum,0)+" = Entity ID");
-			//System.out.println(helper.byteFromByteArray(sum,4)+" = Entity Class");
-			//System.out.println(helper.floatFromByteArray(sum,5)+" = Position X");
-			//System.out.println(helper.floatFromByteArray(sum,9)+" = Position Y");
-			//System.out.println(helper.floatFromByteArray(sum,13)+" = Direction X");
-			//System.out.println(helper.floatFromByteArray(sum,17)+" = Direction Y");
-			//System.out.println(helper.floatFromByteArray(sum,21)+" = Velocity X");
-			//System.out.println(helper.floatFromByteArray(sum,25)+" = Velocity Y");
-			//System.out.println("davor");
-			DeserializedEntity de = entityDeserializer.getDeserializedEntityFromByteArray(sum, 8).get(0);
-			
-			Entity e = World.getInstance().getBattleField().getEntitybyId(c.getPlayerID());
-			//System.out.println("danach");
-			//e.setPosition(new Vector2(helper.floatFromByteArray(sum,5),helper.floatFromByteArray(sum,9)));
-			if (e.getId()==de.id){
-			e.getPosition().x = de.posX;
-			e.getPosition().y = de.posY;
-			e.getDirection().x = de.dirX;
-			e.getDirection().y = de.dirY;
-			e.getUpdateState().getMove().getVelocity().x = de.velX;
-			e.getUpdateState().getMove().getVelocity().y = de.velY;
-			}
+			c.setLastPlayerPacket(input);
+			System.out.println("Last Packet is a player. Player set!");
 		}
 	}
-	
-	public void checkIfPlayerAlreadyInList(InetAddress ip,int port){
+	public void checkIfPlayerAlreadyInListOLD(InetAddress ip,int port){
 		boolean checkIfAlreadyInList = false;
-		for (ClientConnection c : ConnectionHandler.getInstance().clients)
+		for (ClientConnection c : connectionHandler.clients)
 		{
 			
 			
@@ -126,7 +80,7 @@ public class UDPThreadReceiver extends Thread{
 				c.udpPackagesReceived++;
 				c.clientPortUDP = port;
 				checkIfAlreadyInList = true;
-				PanelConnection.updateRows();
+				PanelConnection.updateRows(connectionHandler);
 				//}
 			}
 			
@@ -137,13 +91,33 @@ public class UDPThreadReceiver extends Thread{
 				ClientConnection newConnection = new ClientConnection(); //bspw. 242.12.42.11:22802
 				newConnection.clientIP = ip;
 				newConnection.clientPortUDP = port;
-				newConnection.playerID = ConnectionHandler.getInstance().getLowestIdFromConnectionList(); //Player ID
+				newConnection.playerID = connectionHandler.getLowestIdFromConnectionList(); //Player ID
 				newConnection.setClientPortUDP(port);
-				ConnectionHandler.getInstance().clients.add(newConnection); // 
+				connectionHandler.clients.add(newConnection); // 
 				
 				//PanelConnection.insertNewValueToTable(newConnection);
-				PanelConnection.updateRows();
+				PanelConnection.updateRows(connectionHandler);
 				
+		}
+	}
+	public void checkIfPlayerAlreadyInList(InetAddress ip,int port){
+		System.out.println(ip.getHostName()+":"+port+" -> IP PORT UDP");
+		if (this.c == null){
+			System.out.println("c is null");
+			for (ClientConnection client : connectionHandler.clients)
+			{
+				if (client.getClientIP().getHostAddress().trim().equalsIgnoreCase(ip.getHostAddress().trim())) {
+					if (client.getClientPortUDP() == port){
+						this.c = client;
+						c.clientPortUDP = port;
+						PanelConnection.updateRows(connectionHandler);
+						break;
+					}
+				}
+			}
+		this.c.udpPackagesReceived++;
+		
+			
 		}
 	}
 	

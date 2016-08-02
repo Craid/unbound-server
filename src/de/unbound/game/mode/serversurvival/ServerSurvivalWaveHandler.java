@@ -51,10 +51,9 @@ public class ServerSurvivalWaveHandler extends WaveHandler {
 	}
 	
 	@Override
-	public void initializeMap(BattleField battleField) {
+	public void createMap(BattleField battleField) {
 		getEnemyFactory().createSpawner();
 		getOwnFactory().createMap(this.getSeed());
-		battleField.update(0); //initial update to write Entities to list
 	}
 	
 }

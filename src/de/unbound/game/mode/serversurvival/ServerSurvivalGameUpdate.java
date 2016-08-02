@@ -2,16 +2,17 @@ package de.unbound.game.mode.serversurvival;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.sun.jmx.remote.internal.ClientCommunicatorAdmin;
 
 import de.unbound.game.GameCamera;
 import de.unbound.game.World;
 import de.unbound.game.mode.AbstractGameUpdate;
+import de.unbound.game.mode.serversurvival.util.NetworkUpdateHelper;
 import de.unbound.game.model.entities.Entity;
+import de.unbound.server.UnboundServerConstants;
+import de.unbound.server.UnboundServerConstants.Status;
 import de.unbound.server.network.ConnectionHandler;
 import de.unbound.utility.UnboundConstants;
 
@@ -19,7 +20,9 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	private BitmapFont font;
 	private SpriteBatch batch;
-	private Sprite bathTub;
+	private NetworkUpdateHelper updateHelper;
+	private int timer;
+	private ConnectionHandler connectionHandler;
 	
 	public ServerSurvivalGameUpdate() {
 		super(new ServerSurvivalCollisionDetection());
@@ -28,16 +31,18 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 
 	protected void init() {
 		batch = new SpriteBatch();
-		int width = UnboundConstants.WORLDWIDTH*battleField.getScaleX();
-		int height = UnboundConstants.WORLDHEIGHT*battleField.getScaleY();
+		int width = UnboundConstants.WORLDWIDTH;
+		int height = UnboundConstants.WORLDHEIGHT;
 		camera = new GameCamera(width,height);
 		camera.position.x = width/2;
 		camera.position.y = height/2;
 		font = new BitmapFont();
-		bathTub = new Sprite(new Texture(Gdx.files.internal("img/bathtub.png")));
-		bathTub.setPosition(-560, -260);
-		bathTub.setOrigin(0, 0);
-		bathTub.setScale(1.33f, 1.08f);
+		timer = 0;
+		
+		connectionHandler = new ConnectionHandler(UnboundServerConstants.PORT);
+		updateHelper = new NetworkUpdateHelper(battleField,connectionHandler);
+
+		connectionHandler.startServer();
 	}
 
 	@Override
@@ -47,9 +52,12 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	@Override
 	public void doBeforeUpdate() {
-		ConnectionHandler.getInstance().udpSender.sendAllEntitiesToAllPlayers();
+		if(timer++>8){
+			connectionHandler.udpSender.sendAllEntitiesToAllPlayers(battleField);
+		} 
+		updateHelper.updateReceivedPlayers();
 	}
-
+	
 	@Override
 	public void onCollisionHandling(double deltaTime) {
 		collisionDetection.update(deltaTime);
@@ -60,9 +68,11 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 		render();
 	}
 
+	
 	@Override
 	public void onGameEnd() {
-		renderGameOver();
+		UnboundServerConstants.SERVER_STATUS = Status.GAMEOVER;
+		connectionHandler.stopServer();
 	}
 
 
@@ -73,7 +83,7 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 		batch.setProjectionMatrix(camera.combined); //ka warum... aber man muss es drinlassen
 		//Damit die batch weiß, welcher Bereich angezeigt werden soll
 		batch.begin();
-		bathTub.draw(batch);
+		background.draw(batch);
 		
 		for(Entity e : battleField.getGameObjects()){
 			e.render(batch);
@@ -82,14 +92,6 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 		batch.end();
 	}
 	
-	private void renderGameOver() {
-		render();
-		batch.begin();
-		String temp = "GameOver!";
-		font.draw(batch, temp, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
-		batch.end();
-	}
-
 	private void updateCameraPosition(){
 		camera.update();
 	}
@@ -112,7 +114,7 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 
 	@Override
 	public boolean isPaused() {
-		return battleField.getPlayers().size() == 0;
+		return battleField.getPlayers().size() == 0 || UnboundServerConstants.SERVER_STATUS == Status.PAUSED;
 	}
 
 	@Override

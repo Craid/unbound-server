@@ -9,9 +9,11 @@ import de.unbound.server.view.PanelConnection;
 
 
 public class TCPThreadAccept extends Thread{
-	ConnectionHandler connectionHandler;
-	ServerSocket srvSkt;
+	
 	private final String logName = "[TCP Accepter] "; //für logs
+	private ConnectionHandler connectionHandler;
+	ServerSocket srvSkt;
+
 
 	public TCPThreadAccept(ConnectionHandler connectionHandler, ServerSocket srvSkt) {
 		this.connectionHandler = connectionHandler;
@@ -24,20 +26,15 @@ public class TCPThreadAccept extends Thread{
 			try {
 				Socket skt = srvSkt.accept();
 				ClientConnection newConnection = new ClientConnection(skt.getInetAddress(),skt.getPort()); //bspw. 242.12.42.11:22802
-				
-				//newConnection.playerID = ConnectionHandler.getInstance().getLowestIdFromConnectionList(); //Player ID
-				ConnectionHandler.getInstance().clients.add(newConnection); // 
+				connectionHandler.clients.add(newConnection); // 
 				PanelConnection.insertNewValueToTable(newConnection);
-				
-				System.out.println("Accepted: " + skt.getInetAddress()
-						+ ":" + skt.getPort());
-				connectionHandler.outputSockets.put(skt,
-						new PrintWriter(skt.getOutputStream()));
+				System.out.println("Accepted: " + skt.getInetAddress()+ ":" + skt.getPort());
+				connectionHandler.outputSockets.put(skt,new PrintWriter(skt.getOutputStream()));
 				// Key = Socket, Value = PrintWriter
 				new TCPThreadRead(connectionHandler, skt,newConnection).start();
 				
 			} catch (IOException e) {
-				//e.printStackTrace();
+				
 			}
 		}
 	}

@@ -21,9 +21,9 @@ public class AlternativePanelLog extends JPanel {
 	Date date;
 	static final SimpleDateFormat sdf = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS");
-	private static AlternativePanelLog instance;
+	private PipedInputStream pIn;
 
-	private AlternativePanelLog() {
+	public AlternativePanelLog() {
 		this.setPreferredSize(new Dimension(650, 600));
 		date = new Date();
 		area = new JTextArea();
@@ -35,12 +35,13 @@ public class AlternativePanelLog extends JPanel {
 		try {
 			PipedOutputStream pOut = new PipedOutputStream();
 			System.setOut(new PrintStream(pOut));
-			PipedInputStream pIn = new PipedInputStream(pOut);
-			final BufferedReader reader = new BufferedReader(
-					new InputStreamReader(pIn));
+			pIn = new PipedInputStream(pOut);
+			
 
 			Thread d = new Thread() {
 				public void run() {
+					BufferedReader reader = new BufferedReader(
+							new InputStreamReader(pIn));
 					while (true) {
 						try {
 							String line = reader.readLine();
@@ -49,7 +50,11 @@ public class AlternativePanelLog extends JPanel {
 								// Write line to component
 							}
 						} catch (IOException ex) {
-							// Handle ex
+							try {
+								reader.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}
@@ -75,9 +80,4 @@ public class AlternativePanelLog extends JPanel {
 		}
 	}
 
-	public static AlternativePanelLog getInstance() {
-		if (instance == null)
-			instance = new AlternativePanelLog();
-		return instance;
-	}
 }

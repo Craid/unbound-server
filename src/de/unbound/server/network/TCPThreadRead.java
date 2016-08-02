@@ -11,13 +11,13 @@ import de.unbound.server.view.PanelConnection;
 
 public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 	
+	private final String logName = "[TCP Reader] "; //für logs
 	private ConnectionHandler connectionHandler;
 	private Socket skt;
 	private BufferedReader br;
 	private String userName;
 	private ClientConnection client;
 	private TCPSender tcpSender;
-	private final String logName = "[TCP Reader] "; //für logs
 	
 	
 	public TCPThreadRead(ConnectionHandler connectionHandler, Socket skt,ClientConnection c){
@@ -40,7 +40,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			
 			connectionHandler.tellEveryone(userName + " has joined the Chat!\n");
 			client.setPlayerName(userName);
-			PanelConnection.updateRows();
+			PanelConnection.updateRows(connectionHandler);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -68,7 +68,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 				System.out.println(logName+" TCP Message from: "+skt.getInetAddress().getHostName()+":"+skt.getPort()+"->"+input);
 				checkInput(input);
 				client.tcpPackagesReceived++;
-				PanelConnection.updateRows();
+				PanelConnection.updateRows(connectionHandler);
 				
 					tcpSender.tellOne("ich schicke einfach mal so ne Nachricht",skt);
 					//client.packagesPerSecondSentTo++;
@@ -80,10 +80,10 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-					System.out.println("close is wrong");
+					System.out.println(logName+"Trying to close the TCP Socket "+skt.getPort()+" was not successfull");
 				}
 				e.printStackTrace();
-				System.out.println("read is wrong");
+				System.out.println(logName+"Trying to read was not successfull");
 				exitProcedure();	
 				
 			}
@@ -100,19 +100,10 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			exitProcedure();	
 		}
 		if (input.equalsIgnoreCase("New Player")) {
-			System.out.println(logName+"NEW PLAYER DETECTED"); //TODO i don't get it..
-			//ConnectionHandler.getInstance().tcpSender.
+			System.out.println(logName+"NEW PLAYER DETECTED"); 
 			
 			tcpSender.sendPlayerAndMainBase(skt);
-			/*
-					DataOutputStream dOut = new DataOutputStream(skt.getOutputStream());
 
-					dOut.writeInt(message.length); // write length of the message
-					dOut.write(message); 
-					dOut.flush();
-					System.out.println("Sent Player and Main Base");
-			*/
-			
 			}
 	}
 	public void exitProcedure(){
@@ -120,7 +111,7 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 		connectionHandler.tellEveryone(userName + " has signed off.\n");
 		int port = skt.getPort();
 		ClientConnection connection = null;
-		for (ClientConnection c : ConnectionHandler.getInstance().clients)
+		for (ClientConnection c : connectionHandler.clients)
 		{
 			
 			
@@ -134,12 +125,13 @@ public class TCPThreadRead extends Thread{ // equivalent to MessageThread
 			}
 		}
 		
-		ConnectionHandler.getInstance().clients.remove(connection);
+		connectionHandler.clients.remove(connection);
 		try {
 			skt.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		PanelConnection.updateRows(connectionHandler);
 	}
 }

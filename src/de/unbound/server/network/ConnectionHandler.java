@@ -12,33 +12,27 @@ import de.unbound.server.view.PanelConnection;
 
 public class ConnectionHandler {
 
+	private final String logName = "[Connection Handler] "; //für logs
+	int 	portNumberTCP;
+	int 	portNumberUDP;
 	ConnectionHandler connectionHandler;
-	int 	portNumber;
-	public ServerSocket 	serverSocket;
-	public TCPThreadAccept tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
-	public TCPSender 		tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
+	public ServerSocket 		serverSocket;
+	public TCPThreadAccept 		tcpAccepter; //die neu erstellten Sockets werden in der HashMap gespeichert!
+	public TCPSender 			tcpSender; //kann an alle Teilnehmer aus der HashMap TCP-Packets über Sockets verschicken
 	public UDPThreadReceiver 	udpReceiver; //empfängt alle UDP-Packages
-	public UDPSender 		udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
+	public UDPSender 			udpSender; //kann an einzelne Endgeräte oder alle Teilnehmer Packages versenden
 	
 	HashMap<Socket, PrintWriter> outputSockets;
 	public ArrayList<ClientConnection> clients;
-	private final String logName = "[Connection Handler] "; //für logs
-	
-	public static ConnectionHandler instance;
-	
-	public static ConnectionHandler getInstance(){
-		if(instance == null)
-			instance = new ConnectionHandler();
-		return instance;
-	}
 	
 
-	private ConnectionHandler(){
-		this.portNumber = 11300; //default value
+	public ConnectionHandler(int port){
+		this.portNumberTCP = port; //default value
+		this.portNumberUDP = port+1;
+		clients = new ArrayList<ClientConnection>();
 	}
 	
 	public void startServer(){
-		clients = new ArrayList<ClientConnection>();
 		startTCP();
 		startUDP();
 	}
@@ -46,24 +40,23 @@ public class ConnectionHandler {
 		stopTCP();
 		stopUDP();
 		clients.clear();
-		PanelConnection.updateRows();
+		PanelConnection.updateRows(connectionHandler);
 	}
 	public void startUDP(){
-		udpReceiver = new UDPThreadReceiver(portNumber+1);
+		udpReceiver = new UDPThreadReceiver(this,portNumberUDP);
 		udpReceiver.start();
-		udpSender = new UDPSender(udpReceiver.socket);
+		udpSender = new UDPSender(this,udpReceiver.socket);
 	}
 	public void stopUDP(){
 		udpReceiver.setRunning(false);
 		udpSender.sendEmptyDataToSelf();
 		udpSender.close();
-
 	}
 	
 	public void startTCP(){
 		try {
-			serverSocket = new ServerSocket(portNumber);
-			System.out.println(logName+"Started with Port: "+portNumber);
+			serverSocket = new ServerSocket(portNumberTCP);
+			System.out.println(logName+"Started with Port: "+portNumberTCP);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -96,22 +89,16 @@ public class ConnectionHandler {
 	}
 	
 	public ClientConnection getClientConnection(InetAddress ip,int port){
-		boolean checkIfAlreadyInList = false;
-		for (ClientConnection c : ConnectionHandler.getInstance().clients)
+		System.out.println(logName+"looking for connections...");
+		for (ClientConnection c : clients)
 		{
-			
-			
-			//System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
 			if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(ip.getHostAddress().trim())) {
 				if (port == c.getClientPortTCP()){
-				System.out.println("Player is already known to the System");
-				//System.exit(1);
-				checkIfAlreadyInList = true;
-				PanelConnection.updateRows();
-				return c;
+					System.out.println("Player is already known to the System");
+					PanelConnection.updateRows(connectionHandler);
+					return c;
 				}
 			}
-			
 		}
 		return null;
 	}
@@ -133,14 +120,21 @@ public class ConnectionHandler {
 		return sockets;
 	}
 	
-	public void setPortNumber(int port){
-		this.portNumber = port;
-	}
-	public int getLowestIdFromConnectionList(){
+	public int getLowestIdFromConnectionList(){ //TODO delete
 		int i = 1;
 		for (ClientConnection c : clients){
 			if (c.playerID<=i) i++;
 		}
 		return 111;
 	}
+	
+	public int getPortNumberTCP() {
+		return portNumberTCP;
+	}
+
+
+	public int getPortNumberUDP() {
+		return portNumberUDP;
+	}
+
 }

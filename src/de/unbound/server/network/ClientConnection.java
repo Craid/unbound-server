@@ -1,7 +1,13 @@
 package de.unbound.server.network;
 
+import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import de.unbound.game.World;
+import de.unbound.game.model.entities.Entity;
+import de.unbound.game.network.serialization.PacketDeserializer;
+import de.unbound.game.network.serialization.PacketDeserializer.DeserializedEntity;
 
 public class ClientConnection {
 
@@ -12,12 +18,16 @@ String statusTCP;
 String statusUDP;
 int playerID;
 String playerName;
+DatagramPacket lastPlayerPacket;
+PacketDeserializer entityDeserializer;
 
 float latency;
 long tcpPackagesReceived;
 long tcpPackagesSentTo;
 long udpPackagesReceived;
 long udpPackagesSentTo;
+
+
 
 
 public ClientConnection(){
@@ -38,6 +48,7 @@ public void init(){
 	tcpPackagesSentTo = 0;
 	playerName = "Pending...";
 	playerID = 0;
+	entityDeserializer = new PacketDeserializer();
 	try {
 		clientIP = InetAddress.getLocalHost();
 	} catch (UnknownHostException e) {
@@ -48,6 +59,29 @@ public void init(){
 public InetAddress getClientIP() {
 	return clientIP;
 }
+
+public DeserializedEntity getDeserializedEntityFromLastPacket(){
+	if (getLastPlayerPacket()!=null){
+	byte[] sum = getLastPlayerPacket().getData();
+	DeserializedEntity de = entityDeserializer.getDeserializedEntityFromByteArray(sum, 8).get(1);
+	entityDeserializer.getTimeStampFromByteArray(sum);
+	System.out.println("up until here");
+	Entity e = World.getInstance().getBattleField().getEntitybyId(this.getPlayerID());
+	//System.out.println("danach");
+	//e.setPosition(new Vector2(helper.floatFromByteArray(sum,5),helper.floatFromByteArray(sum,9)));
+	if (e.getId()==de.id){ // TODO Das ist der böse code
+	//e.getPosition().x = de.posX;
+	//e.getPosition().y = de.posY;
+	//e.getDirection().x = de.dirX;
+	//e.getDirection().y = de.dirY;
+	//e.getUpdateState().getMove().getVelocity().x = de.velX;
+	//e.getUpdateState().getMove().getVelocity().y = de.velY;
+		return de;
+	}
+	}
+	return null;
+}
+
 public void setClientIP(InetAddress clientIP) {
 	this.clientIP = clientIP;
 }
@@ -69,6 +103,13 @@ public String getPlayerName() {
 
 public void setPlayerName(String playerName) {
 	this.playerName = playerName;
+}
+public DatagramPacket getLastPlayerPacket() {
+	return lastPlayerPacket;
+}
+
+public void setLastPlayerPacket(DatagramPacket lastPlayerPacket) {
+	this.lastPlayerPacket = lastPlayerPacket;
 }
 public String getStatusUDP() {
 	return statusUDP;

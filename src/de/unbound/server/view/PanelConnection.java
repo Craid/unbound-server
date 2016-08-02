@@ -25,17 +25,6 @@ public class PanelConnection extends JPanel {
 	}
 
 	public void initializeTable() {
-		String[] columnNames = { "Status", "IPPort", "PlayerID", "Name",
-				"Latency", "Packages Sent", "Packages Received" };
-		// Its data is initialized and stored in a two-dimensional Object array:
-
-		Object[][] data = { { "not active", "xxx.xxx.xxx.xxx:yyyyy", "1",
-				"Generic Player", new Integer(0), new Long(0), new Long(0) } };
-		// Then the Table is constructed using these data and columnNames:
-
-		// this.table = new JTable(data, columnNames);
-		// this.table.setModel(new DefaultTableModel());
-
 		DefaultTableModel model = new DefaultTableModel();
 		model.addColumn("Status");
 		model.addColumn("IPPort");
@@ -88,14 +77,20 @@ public class PanelConnection extends JPanel {
 		}
 	}
 
-	public synchronized static void updateRows() {
+	public synchronized static void updateRows(ConnectionHandler connectionHandler) {
+		
+		if (connectionHandler!=null){
 		DefaultTableModel dm = (DefaultTableModel) table.getModel();
 		int rowCount = dm.getRowCount();
 		// Remove rows one by one from the end of the table
 		for (int i = rowCount - 1; i >= 0; i--) {
-			dm.removeRow(i);
+			
+				dm.removeRow(i);
+		
 		}
-		for (ClientConnection client : ConnectionHandler.getInstance().clients) {
+		
+		for (ClientConnection client : connectionHandler.clients) {
+			try{
 			Object[] data = new Object[10];
 			data[0] = client.getStatusTCP();
 			data[1] = client.getClientIP().getHostAddress() + ":"
@@ -110,6 +105,8 @@ public class PanelConnection extends JPanel {
 			data[9] = client.getUdpPackagesReceived();
 			DefaultTableModel model = (DefaultTableModel) table.getModel();
 			model.addRow(data);
+			}catch(Exception e){}
+		}
 		}
 	}
 
