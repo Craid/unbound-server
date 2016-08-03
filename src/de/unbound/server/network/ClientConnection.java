@@ -21,11 +21,13 @@ InetAddress clientIP;
 	Socket clientSocket;
 	String commands;
 
+	private boolean isConnected;
 	float latency;
 	long tcpPackagesReceived;
 	long tcpPackagesSentTo;
 	long udpPackagesReceived;
 	long udpPackagesSentTo;
+	private long timeStampUDPReceive;
 
 	public ClientConnection() {
 		init();
@@ -51,6 +53,7 @@ InetAddress clientIP;
 		playerName = "Pending...";
 		playerID = 0;
 		entityDeserializer = new PacketDeserializer();
+		timeStampUDPReceive = 0;
 		try {
 			clientIP = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
@@ -134,7 +137,11 @@ InetAddress clientIP;
 	}
 
 	public void setLastPlayerPacket(DatagramPacket lastPlayerPacket) {
-		this.lastPlayerPacket = lastPlayerPacket;
+		long tempTimeStamp = entityDeserializer.getTimeStampFromByteArray(lastPlayerPacket.getData());
+		if(tempTimeStamp > timeStampUDPReceive){
+			timeStampUDPReceive = tempTimeStamp;
+			this.lastPlayerPacket = lastPlayerPacket;
+		}
 	}
 
 	public String getStatusUDP() {
@@ -200,5 +207,13 @@ InetAddress clientIP;
 	public void setUdpPackagesSentTo(long udpPackagesSentTo) {
 		this.udpPackagesSentTo = udpPackagesSentTo;
 	}
+	public boolean isConnected() {
+		return isConnected;
+	}
+
+	public void setConnected(boolean isConnected) {
+		this.isConnected = isConnected;
+	}
+
 
 }

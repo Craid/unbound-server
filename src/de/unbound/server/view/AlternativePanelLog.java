@@ -32,37 +32,37 @@ public class AlternativePanelLog extends JPanel {
 		area.setSelectionColor(Color.BLACK);
 		this.add(area);
 
-		try {
-			PipedOutputStream pOut = new PipedOutputStream();
-			System.setOut(new PrintStream(pOut));
-			pIn = new PipedInputStream(pOut);
-			
-
-			Thread d = new Thread() {
-				public void run() {
-					BufferedReader reader = new BufferedReader(
-							new InputStreamReader(pIn));
-					while (true) {
-						try {
-							String line = reader.readLine();
-							if (line != null) {
-								log(line);
-								// Write line to component
-							}
-						} catch (IOException ex) {
-							try {
-								reader.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					}
-				}
-			};
-			d.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			PipedOutputStream pOut = new PipedOutputStream();
+//			System.setOut(new PrintStream(pOut));
+//			pIn = new PipedInputStream(pOut);
+//			
+//
+//			Thread d = new Thread() {
+//				public void run() {
+//					BufferedReader reader = new BufferedReader(
+//							new InputStreamReader(pIn));
+//					while (true) {
+//						try {
+//							String line = reader.readLine();
+//							if (line != null) {
+//								log(line);
+//								// Write line to component
+//							}
+//						} catch (IOException ex) {
+//							try {
+//								reader.close();
+//							} catch (IOException e) {
+//								e.printStackTrace();
+//							}
+//						}
+//					}
+//				}
+//			};
+//			d.start();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void log(String text) {

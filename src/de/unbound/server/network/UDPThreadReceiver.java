@@ -37,7 +37,6 @@ public class UDPThreadReceiver extends Thread{
 			try {
 				socket.receive(lastPacket); // Diese Methode "blockt" solange, bis ein Packet ankommt!
 				ClientConnection c = getCorrespondentConnection(lastPacket);
-				
 				checkInput(lastPacket);
 			} catch (Exception e){
 			}

@@ -1,5 +1,7 @@
 package de.unbound.game.mode.serversurvival;
 
+import java.io.IOException;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -10,11 +12,13 @@ import de.unbound.game.GameCamera;
 import de.unbound.game.World;
 import de.unbound.game.mode.AbstractGameUpdate;
 import de.unbound.game.mode.serversurvival.util.NetworkUpdateHelper;
+import de.unbound.game.mode.serversurvival.util.TCPGameCommandHandler;
 import de.unbound.game.model.entities.Entity;
 import de.unbound.server.UnboundServerConstants;
 import de.unbound.server.UnboundServerConstants.Status;
 import de.unbound.server.network.ClientConnection;
 import de.unbound.server.network.ConnectionHandler;
+import de.unbound.server.view.PanelConnection;
 import de.unbound.utility.UnboundConstants;
 
 public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
@@ -24,7 +28,7 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	private NetworkUpdateHelper updateHelper;
 	private int timer;
 	private ConnectionHandler connectionHandler;
-	
+	private TCPGameCommandHandler tcpCommandHandler;
 	public ServerSurvivalGameUpdate() {
 		super(new ServerSurvivalCollisionDetection());
 		init();
@@ -44,6 +48,8 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 		updateHelper = new NetworkUpdateHelper(battleField,connectionHandler);
 
 		connectionHandler.startServer();
+		commandHandler = new ServerSurvivalCommandHandler();
+		tcpCommandHandler = new TCPGameCommandHandler(connectionHandler.clients);
 	}
 
 	@Override
@@ -53,9 +59,10 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	
 	@Override
 	public void doBeforeUpdate() {
-		//if(timer++>4){
+		if(timer++>64){
 			connectionHandler.udpSender.sendAllEntitiesToAllPlayers(battleField);
-		//} 
+		} 
+		tcpCommandHandler.handleInput();
 		updateHelper.updateReceivedPlayers();
 	}
 	
@@ -68,13 +75,54 @@ public class ServerSurvivalGameUpdate extends AbstractGameUpdate{
 	public void doAfterUpdate() {
 		render();
 		for(Entity e : battleField.getPlayers()){
-			if(!e.isActive()){
-				e.setHp(e.getModel().getInitialHP());
-				e.setActive(true);
-				ClientConnection client = connectionHandler.getClientConnectionByPlayerID(e.getId());
-				connectionHandler.tcpSender.tellOne("Respawn", client.getSocket());
+			ClientConnection c = connectionHandler.getClientConnectionByPlayerID(e.getId());
+			if(c != null && c.isConnected()){
+				if(!e.isActive()){
+					e.setHp(e.getModel().getInitialHP());
+					e.setActive(true);
+					ClientConnection client = connectionHandler.getClientConnectionByPlayerID(e.getId());
+					connectionHandler.tcpSender.tellOne("Respawn", client.getSocket());
+				}
+			}else{
+				e.setActive(false);
+				connectionHandler.clients.remove(c);
+				PanelConnection.updateRows(connectionHandler);
+			} 
+			
+		}
+	}
+	
+	public void checkActivePlayers(){
+		for (ClientConnection client : connectionHandler.clients){
+			if (!client.isConnected()){
+				World.getInstance().getBattleField().getEntitybyId(client.getPlayerID()).setActive(false);
 			}
 		}
+		
+//		int port = skt.getPort();
+//		ClientConnection connection = null;
+//		for (ClientConnection c : connectionHandler.clients)
+//		{
+//			
+//			
+//			System.out.println(c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim()));
+//			if (c.getClientIP().getHostAddress().trim().equalsIgnoreCase(skt.getInetAddress().getHostAddress().trim())) {
+//				if (port == c.getClientPortTCP()){
+//				System.out.println(logName+"Player "+c.playerID+" removed from Connection List");
+//				PanelConnection.removeConnectionFromTable(c);
+//				connection = c;
+//				}
+//			}
+//		}
+//		
+//		connectionHandler.clients.remove(connection);
+//		try {
+//			skt.close();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		PanelConnection.updateRows(connectionHandler);
 	}
 
 	
